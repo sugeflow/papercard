@@ -1,0 +1,245 @@
+{
+  "extName": {
+    "message": "PaperCard — Tweet & Reddit Post to Image"
+  },
+  "extShortName": {
+    "message": "PaperCard"
+  },
+  "extDescription": {
+    "message": "Turn social media posts, or any text you select, into clean image cards. One click, copied to your clipboard. No watermark."
+  },
+  "actionTitle": {
+    "message": "PaperCard settings & guide"
+  },
+  "commandCreateCard": {
+    "message": "Copy the selected text or the post under the cursor as an image"
+  },
+  "contextMenuCreateCard": {
+    "message": "Copy selection as image"
+  },
+  "unsupportedPage": {
+    "message": "PaperCard can't run on this page (browser pages, Web Store and PDFs are off-limits)."
+  },
+  "menuShareAsImage": {
+    "message": "Copy as image"
+  },
+  "toastGenerating": {
+    "message": "Creating image…"
+  },
+  "toastCopied": {
+    "message": "Copied! Paste anywhere with Ctrl/Cmd + V"
+  },
+  "toastCopyFailed": {
+    "message": "Couldn't copy automatically. Download the PNG instead."
+  },
+  "toastFailed": {
+    "message": "Couldn't create the image. Please try again."
+  },
+  "toastNoPost": {
+    "message": "Couldn't find this post. Right-click directly on the post and retry."
+  },
+  "toastSelectText": {
+    "message": "Select some text first, then try again."
+  },
+  "toastDownload": {
+    "message": "Download"
+  },
+  "toastClose": {
+    "message": "Close"
+  },
+  "toastPreviewAlt": {
+    "message": "Share card preview"
+  },
+  "footerFallback": {
+    "message": "Share card"
+  },
+  "stat_replies": {
+    "message": "Replies"
+  },
+  "stat_reposts": {
+    "message": "Reposts"
+  },
+  "stat_likes": {
+    "message": "Likes"
+  },
+  "stat_bookmarks": {
+    "message": "Bookmarks"
+  },
+  "stat_views": {
+    "message": "Views"
+  },
+  "stat_upvotes": {
+    "message": "Upvotes"
+  },
+  "stat_comments": {
+    "message": "Comments"
+  },
+  "optionsTitle": {
+    "message": "Settings"
+  },
+  "optionsTagline": {
+    "message": "Turn anything you read into a card worth sharing."
+  },
+  "optionsQuickStart": {
+    "message": "Quick start"
+  },
+  "stepPostTitle": {
+    "message": "Social posts"
+  },
+  "stepPostBody": {
+    "message": "Right-click a post and choose “Copy post as image”. On X and Reddit, it's also in the Share menu as “Copy as image”."
+  },
+  "stepSelectionTitle": {
+    "message": "Any web page"
+  },
+  "stepSelectionBody": {
+    "message": "Select text, right-click, then choose “Copy selection as image”."
+  },
+  "stepShortcutTitle": {
+    "message": "Keyboard"
+  },
+  "stepShortcutBody": {
+    "message": "Select text or hover a post, then press"
+  },
+  "stepShortcutEdit": {
+    "message": "Change"
+  },
+  "shortcutNotSet": {
+    "message": "Not set"
+  },
+  "stepPasteNote": {
+    "message": "The image goes straight to your clipboard. Paste it anywhere with Ctrl/Cmd + V."
+  },
+  "optionsTheme": {
+    "message": "Theme"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "optionsFooter": {
+    "message": "Footer"
+  },
+  "optionsFooterHint": {
+    "message": "Pick what shows under the post. Stats only appear when the post has them."
+  },
+  "fieldDate": {
+    "message": "Date"
+  },
+  "optionsQr": {
+    "message": "QR code"
+  },
+  "optionsQrHint": {
+    "message": "Adds a QR code that opens the original post."
+  },
+  "optionsSaved": {
+    "message": "Saved ✓"
+  },
+  "optionsPreview": {
+    "message": "Preview"
+  },
+  "sampleX": {
+    "message": "X"
+  },
+  "sampleReddit": {
+    "message": "Reddit"
+  },
+  "sampleQuote": {
+    "message": "Quote"
+  },
+  "sampleXBody": {
+    "message": "Read slowly. Keep what moves you. Share it so it can move someone else, too."
+  },
+  "sampleRedditTitle": {
+    "message": "What's a sentence you still think about years later?"
+  },
+  "sampleRedditBody": {
+    "message": "My grandmother wrote “Be kind to your future self” inside every book she gave me. I still hear it."
+  },
+  "sampleQuoteSite": {
+    "message": "The Reading Room"
+  },
+  "sampleQuoteBody": {
+    "message": "Good writing is clear thinking made visible. Say the thing, then stop."
+  },
+  "contextMenuPostCard": {
+    "message": "Copy post as image"
+  },
+  "toastShortcutHint": {
+    "message": "Select some text, or hover over a post, then press the shortcut."
+  },
+  "toastWholeThread": {
+    "message": "Whole thread ({count})"
+  },
+  "toastStyle": {
+    "message": "Style"
+  },
+  "template_paper": {
+    "message": "Paper"
+  },
+  "template_minimal": {
+    "message": "Minimal"
+  },
+  "template_magazine": {
+    "message": "Magazine"
+  },
+  "template_gradient": {
+    "message": "Gradient"
+  },
+  "brandLine": {
+    "message": "Made with PaperCard"
+  },
+  "optionsTemplate": {
+    "message": "Style"
+  },
+  "optionsBranding": {
+    "message": "Credit line"
+  },
+  "optionsBrandingHint": {
+    "message": "Adds a small “Made with PaperCard” to the footer. Off by default — thanks if you turn it on."
+  },
+  "platformWeibo": {
+    "message": "Weibo"
+  },
+  "platformZhihu": {
+    "message": "Zhihu"
+  },
+  "platformXhs": {
+    "message": "Xiaohongshu"
+  },
+  "fieldUpvotes": {
+    "message": "Upvotes (Reddit, Zhihu)"
+  },
+  "sampleThumbBody": {
+    "message": "Keep what moves you."
+  },
+  "optionsSize": {
+    "message": "Size"
+  },
+  "optionsSizeHint": {
+    "message": "Auto fits the post. Fixed sizes suit feeds that crop images (Instagram, Xiaohongshu, stories)."
+  },
+  "ratio_auto": {
+    "message": "Auto"
+  },
+  "toastAdjust": {
+    "message": "Adjust"
+  },
+  "toastSize": {
+    "message": "Size"
+  },
+  "toastContent": {
+    "message": "Content"
+  },
+  "toastThisPost": {
+    "message": "This post"
+  },
+  "optionsPlatformIcon": {
+    "message": "Platform logo"
+  },
+  "optionsPlatformIconHint": {
+    "message": "Shows a small logo of X, Reddit, Weibo and more next to the author. When off, the site's domain goes in the footer instead."
+  }
+}

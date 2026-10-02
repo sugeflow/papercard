@@ -1,0 +1,344 @@
+/* Cloned native X row: X adds its hover class from JS, so tint it here. */
+.tsi-x-menu-item:hover,
+.tsi-x-menu-item:focus-visible {
+  background-color: color-mix(in srgb, var(--tsi-menu-fg, currentColor) 4%, transparent);
+  outline: none;
+}
+
+/* Fallback when no native row can be cloned: mirror X's menu row metrics. */
+.tsi-menu-item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  box-sizing: border-box;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  gap: 12px;
+  letter-spacing: normal;
+  line-height: 20px;
+  min-height: 44px;
+  padding: 12px 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.tsi-menu-item:hover,
+.tsi-menu-item:focus-visible {
+  background: rgba(15, 20, 25, 0.03);
+  outline: none;
+}
+
+.tsi-menu-icon {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 20px;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.tsi-menu-label {
+  font: inherit;
+  line-height: inherit;
+}
+
+.tsi-toast {
+  animation: tsi-toast-in 180ms ease-out;
+  background: rgba(15, 20, 25, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  bottom: 28px;
+  box-shadow: 0 18px 48px rgba(15, 20, 25, 0.28);
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  gap: 12px;
+  line-height: 20px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 14px;
+  position: fixed;
+  right: 24px;
+  z-index: 2147483647;
+}
+
+@keyframes tsi-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.tsi-toast-close {
+  align-items: center;
+  background: rgba(15, 20, 25, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  display: flex;
+  font-size: 16px !important;
+  height: 24px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 !important;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  width: 24px;
+}
+
+.tsi-toast-preview {
+  background: #f4efe7;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: block;
+  max-height: 260px;
+  max-width: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.tsi-toast-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.tsi-toast-label {
+  min-width: 0;
+}
+
+.tsi-toast-busy::before {
+  animation: tsi-spin 700ms linear infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  box-sizing: border-box;
+  content: "";
+  display: inline-block;
+  height: 14px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  width: 14px;
+}
+
+@keyframes tsi-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tsi-toast-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.tsi-toast button {
+  background: #fff;
+  border: 0;
+  border-radius: 6px;
+  color: #0f1419;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 650;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.tsi-toast button.tsi-toast-secondary {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.tsi-toast-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.tsi-toast-panel[hidden] {
+  display: none;
+}
+
+.tsi-toast-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.tsi-toast-row-title {
+  color: rgba(255, 255, 255, 0.64);
+  flex: 0 0 64px;
+  font-size: 12px;
+}
+
+.tsi-toast-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tsi-toast button.tsi-toast-chip {
+  background: transparent;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 4px 10px;
+}
+
+.tsi-toast button.tsi-toast-chip:hover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.tsi-toast button.tsi-toast-chip[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: none;
+  color: #0f1419;
+  cursor: default;
+}
+
+.tsi-toast button:disabled {
+  cursor: progress;
+  opacity: 0.55;
+}
+
+.tsi-render-root {
+  left: -10000px;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  z-index: -1;
+}
+
+.twitter-share-card {
+  background: #fbfaf7;
+  border: 1px solid #e7e0d5;
+  box-sizing: border-box;
+  color: #1f2933;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  padding: 42px;
+  width: 720px;
+}
+
+.twitter-share-header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.twitter-share-avatar {
+  border-radius: 50%;
+  height: 52px;
+  object-fit: cover;
+  width: 52px;
+}
+
+.twitter-share-avatar-fallback {
+  align-items: center;
+  background: #263238;
+  color: #fff;
+  display: flex;
+  font-size: 24px;
+  font-weight: 700;
+  justify-content: center;
+}
+
+.twitter-share-author {
+  min-width: 0;
+}
+
+.twitter-share-name {
+  color: #111827;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 26px;
+}
+
+.twitter-share-handle {
+  color: #667085;
+  display: block;
+  font-size: 15px;
+  line-height: 21px;
+  margin-top: 2px;
+}
+
+.twitter-share-text {
+  color: #1f2933;
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: 30px;
+  line-height: 1.48;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.twitter-share-media {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.twitter-share-media-item {
+  border-radius: 8px;
+  display: block;
+  max-height: none;
+  object-fit: cover;
+}
+
+.twitter-share-footer {
+  border-top: 1px solid #e7e0d5;
+  color: #7a6f63;
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 34px;
+  padding-top: 18px;
+}
+
+.twitter-share-card-dark {
+  background: #171716;
+  border-color: #3c3933;
+  color: #eee4d2;
+}
+
+.twitter-share-card-dark .twitter-share-name {
+  color: #f2eadc;
+}
+
+.twitter-share-card-dark .twitter-share-handle,
+.twitter-share-card-dark .twitter-share-footer {
+  color: #b8ad9b;
+}
+
+.twitter-share-card-dark .twitter-share-text {
+  color: #eee4d2;
+}
+
+.twitter-share-card-dark .twitter-share-footer {
+  border-top-color: #3c3933;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tsi-menu-item:hover,
+  .tsi-menu-item:focus-visible {
+    background: rgba(239, 243, 244, 0.06);
+  }
+}

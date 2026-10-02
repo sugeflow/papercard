@@ -1,0 +1,23 @@
+:root{--paper:#f3ece1;--paper2:#ebe2d3;--ink:#1c1917;--muted:#6b6259;--accent:#d9480f;--card:#fbfaf7;--line:#e2d8c8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;position:relative;
+  background-image:radial-gradient(circle at 12% 18%,rgba(255,255,255,.7),transparent 42%),radial-gradient(circle at 88% 90%,rgba(217,72,15,.07),transparent 40%)}
+.serif{font-family:"Iowan Old Style","Georgia","Songti SC",serif}
+h1{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.eyebrow{font-size:15px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.sub{color:var(--muted);line-height:1.5}
+.card{border-radius:10px;box-shadow:0 1px 2px rgba(28,25,23,.06),0 24px 60px -18px rgba(28,25,23,.35);display:block;background:var(--card)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.01em}
+.brand img{width:34px;height:34px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:15px;font-weight:600;color:var(--ink)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.menu{background:#fff;border-radius:12px;border:1px solid #e7e2da;box-shadow:0 18px 50px -12px rgba(28,25,23,.3);padding:6px 0;width:270px;font-size:16px}
+.menu .it{display:flex;align-items:center;gap:14px;padding:12px 18px;color:#3f3a35}
+.menu .it svg{width:20px;height:20px;flex:none}
+.menu .it.hl{background:#fdf0e8;color:var(--accent);font-weight:700;position:relative}
+.menu .it.hl::after{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:2px;background:var(--accent)}
+.toast{background:rgba(20,20,22,.96);color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:14px;font-size:15px;box-shadow:0 18px 40px -10px rgba(0,0,0,.4)}
+.toast b{background:#fff;color:#111;border-radius:999px;padding:6px 14px;font-size:14px}
+.check{width:22px;height:22px;border-radius:50%;background:#22c55e;display:grid;place-items:center}
+.arrow{color:var(--accent)}

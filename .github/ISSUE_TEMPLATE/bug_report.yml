@@ -1,0 +1,40 @@
+name: Bug report
+description: A post didn't turn into a card, or the card looks wrong.
+labels: [bug]
+body:
+  - type: input
+    id: site
+    attributes:
+      label: Site
+      placeholder: x.com, reddit.com, weibo.com…
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Link to a public post that fails
+    validations:
+      required: true
+  - type: dropdown
+    id: entry
+    attributes:
+      label: How did you start it?
+      options:
+        - Share menu (Copy as image)
+        - Right-click a post (Copy post as image)
+        - Selected text (Copy selection as image)
+        - Keyboard shortcut
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Paste a screenshot of the card or the error toast if you can.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Browser and PaperCard version
+      placeholder: Chrome 140, PaperCard 1.3.0

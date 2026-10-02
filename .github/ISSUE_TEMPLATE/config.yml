@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ideas and questions
+    url: https://github.com/sugeflow/papercard/discussions
+    about: Share card ideas, ask how something works, or show what you made.

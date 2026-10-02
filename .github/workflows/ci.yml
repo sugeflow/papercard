@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - run: npm run check:syntax
+      - name: Check manifest and locales are valid JSON
+        run: node -e 'for (const f of ["manifest.json","_locales/en/messages.json","_locales/zh_CN/messages.json"]) JSON.parse(require("fs").readFileSync(f,"utf8"))'

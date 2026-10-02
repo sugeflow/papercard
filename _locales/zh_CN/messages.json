@@ -1,0 +1,245 @@
+{
+  "extName": {
+    "message": "PaperCard — 推文 & Reddit 帖子一键转图片"
+  },
+  "extShortName": {
+    "message": "PaperCard"
+  },
+  "extDescription": {
+    "message": "把社交平台上的帖子，或网页上选中的文字，一键变成精美的图片卡片，自动复制到剪贴板，无水印。"
+  },
+  "actionTitle": {
+    "message": "PaperCard 设置与使用指南"
+  },
+  "commandCreateCard": {
+    "message": "将选中文字或鼠标所在的帖子复制为图片"
+  },
+  "contextMenuCreateCard": {
+    "message": "将选中文字复制为图片"
+  },
+  "unsupportedPage": {
+    "message": "PaperCard 无法在此页面运行（浏览器内置页、应用商店和 PDF 不支持）。"
+  },
+  "menuShareAsImage": {
+    "message": "复制为图片"
+  },
+  "toastGenerating": {
+    "message": "正在生成图片…"
+  },
+  "toastCopied": {
+    "message": "已复制！按 Ctrl/Cmd + V 粘贴到任意地方"
+  },
+  "toastCopyFailed": {
+    "message": "未能自动复制，请下载 PNG。"
+  },
+  "toastFailed": {
+    "message": "图片生成失败，请重试。"
+  },
+  "toastNoPost": {
+    "message": "没找到这条帖子，请直接在帖子上点右键再试。"
+  },
+  "toastSelectText": {
+    "message": "请先选中一段文字，再试一次。"
+  },
+  "toastDownload": {
+    "message": "下载"
+  },
+  "toastClose": {
+    "message": "关闭"
+  },
+  "toastPreviewAlt": {
+    "message": "分享卡片预览"
+  },
+  "footerFallback": {
+    "message": "分享卡片"
+  },
+  "stat_replies": {
+    "message": "回复"
+  },
+  "stat_reposts": {
+    "message": "转发"
+  },
+  "stat_likes": {
+    "message": "喜欢"
+  },
+  "stat_bookmarks": {
+    "message": "收藏"
+  },
+  "stat_views": {
+    "message": "浏览"
+  },
+  "stat_upvotes": {
+    "message": "赞"
+  },
+  "stat_comments": {
+    "message": "评论"
+  },
+  "optionsTitle": {
+    "message": "设置"
+  },
+  "optionsTagline": {
+    "message": "把读到的好内容，变成一张值得分享的卡片。"
+  },
+  "optionsQuickStart": {
+    "message": "快速上手"
+  },
+  "stepPostTitle": {
+    "message": "社交平台帖子"
+  },
+  "stepPostBody": {
+    "message": "在帖子上点右键 →「将帖子复制为图片」。X 和 Reddit 的分享菜单里也有「复制为图片」。"
+  },
+  "stepSelectionTitle": {
+    "message": "任意网页"
+  },
+  "stepSelectionBody": {
+    "message": "选中文字 → 右键 →「将选中文字复制为图片」。"
+  },
+  "stepShortcutTitle": {
+    "message": "快捷键"
+  },
+  "stepShortcutBody": {
+    "message": "选中文字，或把鼠标停在帖子上，按"
+  },
+  "stepShortcutEdit": {
+    "message": "修改"
+  },
+  "shortcutNotSet": {
+    "message": "未设置"
+  },
+  "stepPasteNote": {
+    "message": "图片会直接进入剪贴板，在微信、飞书、笔记里 Ctrl/Cmd + V 即可粘贴。"
+  },
+  "optionsTheme": {
+    "message": "主题"
+  },
+  "themeLight": {
+    "message": "浅色"
+  },
+  "themeDark": {
+    "message": "深色"
+  },
+  "optionsFooter": {
+    "message": "底部信息"
+  },
+  "optionsFooterHint": {
+    "message": "选择卡片底部显示的内容。帖子本身没有的数据不会显示。"
+  },
+  "fieldDate": {
+    "message": "日期"
+  },
+  "optionsQr": {
+    "message": "二维码"
+  },
+  "optionsQrHint": {
+    "message": "在卡片上添加二维码，扫码直达原帖。"
+  },
+  "optionsSaved": {
+    "message": "已保存 ✓"
+  },
+  "optionsPreview": {
+    "message": "预览"
+  },
+  "sampleX": {
+    "message": "X"
+  },
+  "sampleReddit": {
+    "message": "Reddit"
+  },
+  "sampleQuote": {
+    "message": "金句"
+  },
+  "sampleXBody": {
+    "message": "慢慢读，留下打动你的句子，再把它分享出去，让它也打动别人。"
+  },
+  "sampleRedditTitle": {
+    "message": "有没有一句话，你过了很多年还会想起？"
+  },
+  "sampleRedditBody": {
+    "message": "我外婆送我的每本书扉页上都写着「对未来的自己好一点」。到现在我还记得。"
+  },
+  "sampleQuoteSite": {
+    "message": "读书角"
+  },
+  "sampleQuoteBody": {
+    "message": "好的文字，是清晰思考的样子。把话说清楚，然后停下。"
+  },
+  "contextMenuPostCard": {
+    "message": "将帖子复制为图片"
+  },
+  "toastShortcutHint": {
+    "message": "请先选中文字，或把鼠标停在帖子上，再按快捷键。"
+  },
+  "toastWholeThread": {
+    "message": "整串 {count} 条"
+  },
+  "toastStyle": {
+    "message": "样式"
+  },
+  "template_paper": {
+    "message": "纸张"
+  },
+  "template_minimal": {
+    "message": "极简"
+  },
+  "template_magazine": {
+    "message": "杂志"
+  },
+  "template_gradient": {
+    "message": "渐变"
+  },
+  "brandLine": {
+    "message": "由 PaperCard 生成"
+  },
+  "optionsTemplate": {
+    "message": "样式"
+  },
+  "optionsBranding": {
+    "message": "署名"
+  },
+  "optionsBrandingHint": {
+    "message": "在卡片底部加一行小字「由 PaperCard 生成」。默认关闭，打开就是对我们最大的支持。"
+  },
+  "platformWeibo": {
+    "message": "微博"
+  },
+  "platformZhihu": {
+    "message": "知乎"
+  },
+  "platformXhs": {
+    "message": "小红书"
+  },
+  "fieldUpvotes": {
+    "message": "赞（Reddit、知乎）"
+  },
+  "sampleThumbBody": {
+    "message": "留下打动你的句子。"
+  },
+  "optionsSize": {
+    "message": "尺寸"
+  },
+  "optionsSizeHint": {
+    "message": "「自适应」按内容高度出图；固定比例适合会裁图的平台（小红书、Instagram、快拍）。"
+  },
+  "ratio_auto": {
+    "message": "自适应"
+  },
+  "toastAdjust": {
+    "message": "调整"
+  },
+  "toastSize": {
+    "message": "尺寸"
+  },
+  "toastContent": {
+    "message": "内容"
+  },
+  "toastThisPost": {
+    "message": "单条"
+  },
+  "optionsPlatformIcon": {
+    "message": "平台 Logo"
+  },
+  "optionsPlatformIconHint": {
+    "message": "在作者右侧显示 X、Reddit、微博等平台的小 Logo。关闭后，改为在底部显示网站域名。"
+  }
+}

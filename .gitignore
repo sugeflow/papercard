@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.DS_Store
+store/video/music.wav
+store/video/build/frames/
+store/video/build/.chrome-capture/

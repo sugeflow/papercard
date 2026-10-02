@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PaperCard</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <img class="hero-icon" src="../icons/icon-128.png" alt="" width="48" height="48">
+        <div>
+          <h1>PaperCard</h1>
+          <p data-i18n="optionsTagline">Turn anything you read into a card worth sharing.</p>
+        </div>
+      </header>
+
+      <section class="steps" aria-labelledby="steps-title">
+        <h2 id="steps-title" data-i18n="optionsQuickStart">Quick start</h2>
+        <ol>
+          <li>
+            <strong data-i18n="stepPostTitle">Social posts</strong>
+            <span data-i18n="stepPostBody">Right-click a post and choose “Copy post as image”. On X and Reddit, it's also in the Share menu as “Copy as image”.</span>
+            <span class="platforms" aria-label="Supported sites">
+              <span>X</span><span>Reddit</span><span>Threads</span><span>Instagram</span><span>Bluesky</span>
+              <span data-i18n="platformWeibo">Weibo</span><span data-i18n="platformZhihu">Zhihu</span><span data-i18n="platformXhs">Xiaohongshu</span>
+            </span>
+          </li>
+          <li>
+            <strong data-i18n="stepSelectionTitle">Any web page</strong>
+            <span data-i18n="stepSelectionBody">Select text, right-click, then choose “Copy selection as image”.</span>
+          </li>
+          <li>
+            <strong data-i18n="stepShortcutTitle">Keyboard</strong>
+            <span><span data-i18n="stepShortcutBody">Select text or hover a post, then press</span> <kbd id="shortcut">Alt+Shift+S</kbd>
+              <button type="button" class="link" id="editShortcut" data-i18n="stepShortcutEdit">Change</button></span>
+          </li>
+        </ol>
+        <p class="steps-note" data-i18n="stepPasteNote">The image goes straight to your clipboard. Paste it anywhere with Ctrl/Cmd + V.</p>
+      </section>
+
+      <div class="layout">
+        <form class="settings" id="settings">
+          <section class="panel">
+            <h2 data-i18n="optionsTemplate">Style</h2>
+            <div class="templates" role="radiogroup">
+              <label><input type="radio" name="template" value="paper"><img alt=""><span data-i18n="template_paper">Paper</span></label>
+              <label><input type="radio" name="template" value="minimal"><img alt=""><span data-i18n="template_minimal">Minimal</span></label>
+              <label><input type="radio" name="template" value="magazine"><img alt=""><span data-i18n="template_magazine">Magazine</span></label>
+              <label><input type="radio" name="template" value="gradient"><img alt=""><span data-i18n="template_gradient">Gradient</span></label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2 data-i18n="optionsTheme">Theme</h2>
+            <div class="segmented" role="radiogroup">
+              <label><input type="radio" name="theme" value="light"><span data-i18n="themeLight">Light</span></label>
+              <label><input type="radio" name="theme" value="dark"><span data-i18n="themeDark">Dark</span></label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2 data-i18n="optionsSize">Size</h2>
+            <p class="hint" data-i18n="optionsSizeHint">Auto fits the post. Fixed sizes suit feeds that crop images.</p>
+            <div class="segmented" role="radiogroup">
+              <label><input type="radio" name="ratio" value="auto"><span data-i18n="ratio_auto">Auto</span></label>
+              <label><input type="radio" name="ratio" value="1:1"><span>1:1</span></label>
+              <label><input type="radio" name="ratio" value="4:5"><span>4:5</span></label>
+              <label><input type="radio" name="ratio" value="9:16"><span>9:16</span></label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2 data-i18n="optionsFooter">Footer</h2>
+            <p class="hint" data-i18n="optionsFooterHint">Pick what shows under the post. Stats only appear when the post has them.</p>
+            <div class="chips">
+              <label><input type="checkbox" name="footerFields" value="date"><span data-i18n="fieldDate">Date</span></label>
+              <label><input type="checkbox" name="footerFields" value="likes"><span data-i18n="stat_likes">Likes</span></label>
+              <label><input type="checkbox" name="footerFields" value="reposts"><span data-i18n="stat_reposts">Reposts</span></label>
+              <label><input type="checkbox" name="footerFields" value="replies"><span data-i18n="stat_replies">Replies</span></label>
+              <label><input type="checkbox" name="footerFields" value="views"><span data-i18n="stat_views">Views</span></label>
+              <label><input type="checkbox" name="footerFields" value="bookmarks"><span data-i18n="stat_bookmarks">Bookmarks</span></label>
+              <label><input type="checkbox" name="footerFields" value="upvotes"><span data-i18n="fieldUpvotes">Upvotes (Reddit, Zhihu)</span></label>
+              <label><input type="checkbox" name="footerFields" value="comments"><span data-i18n="stat_comments">Comments</span></label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <label class="switch">
+              <span>
+                <strong data-i18n="optionsPlatformIcon">Platform logo</strong>
+                <span class="hint" data-i18n="optionsPlatformIconHint">Shows a small logo of X, Reddit, Weibo and more next to the author.</span>
+              </span>
+              <input type="checkbox" id="showPlatformIcon" role="switch">
+            </label>
+          </section>
+
+          <section class="panel">
+            <label class="switch">
+              <span>
+                <strong data-i18n="optionsQr">QR code</strong>
+                <span class="hint" data-i18n="optionsQrHint">Adds a QR code that opens the original post.</span>
+              </span>
+              <input type="checkbox" id="showQrCode" role="switch">
+            </label>
+          </section>
+
+          <section class="panel">
+            <label class="switch">
+              <span>
+                <strong data-i18n="optionsBranding">Credit line</strong>
+                <span class="hint" data-i18n="optionsBrandingHint">Adds a small “Made with PaperCard” to the footer. Off by default — thanks if you turn it on.</span>
+              </span>
+              <input type="checkbox" id="showBranding" role="switch">
+            </label>
+          </section>
+
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="preview" aria-labelledby="preview-title">
+          <div class="preview-head">
+            <h2 id="preview-title" data-i18n="optionsPreview">Preview</h2>
+            <div class="tabs" role="tablist">
+              <button type="button" role="tab" data-sample="x" data-i18n="sampleX">X</button>
+              <button type="button" role="tab" data-sample="reddit" data-i18n="sampleReddit">Reddit</button>
+              <button type="button" role="tab" data-sample="quote" data-i18n="sampleQuote">Quote</button>
+            </div>
+          </div>
+          <div class="preview-frame">
+            <img id="preview" alt="">
+          </div>
+        </aside>
+      </div>
+    </main>
+    <script src="core.js"></script>
+    <script src="qrcode.js"></script>
+    <script src="renderer.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

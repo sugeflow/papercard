@@ -1,0 +1,297 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>PaperCard promo</title>
+<style>
+:root{--paper:#f3ece1;--ink:#1c1917;--muted:#6b6259;--accent:#d9480f;--line:#e2d8c8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;position:relative;
+  background-image:radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 45%),radial-gradient(circle at 85% 90%,rgba(217,72,15,.08),transparent 42%)}
+.abs{position:absolute}
+.scene{position:absolute;inset:0;opacity:0}
+.serif{font-family:"Iowan Old Style",Georgia,"Songti SC",serif}
+.h{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.card{border-radius:14px;box-shadow:0 2px 3px rgba(28,25,23,.06),0 40px 90px -24px rgba(28,25,23,.38);display:block}
+.panel{background:#fff;border-radius:18px;border:1px solid #e7e2da;box-shadow:0 24px 70px -24px rgba(28,25,23,.28)}
+.menu{background:#fff;border-radius:16px;border:1px solid #e7e2da;box-shadow:0 24px 60px -14px rgba(28,25,23,.32);padding:8px 0;font-size:22px;transform-origin:top left}
+.menu .it{display:flex;align-items:center;gap:16px;padding:15px 24px;color:#3f3a35;position:relative}
+.menu .it svg{width:24px;height:24px;flex:none}
+.menu .it.hl{color:var(--accent);font-weight:700}
+.menu .it .bg{position:absolute;inset:0;background:#fdf0e8;opacity:0;z-index:-1}
+.menu .it .bar{position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:2px;background:var(--accent);opacity:0}
+.toast{background:rgba(20,20,22,.96);color:#fff;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px;font-size:22px;box-shadow:0 24px 50px -12px rgba(0,0,0,.45)}
+.toast b{background:#fff;color:#111;border-radius:999px;padding:8px 18px;font-size:19px}
+.check{width:30px;height:30px;border-radius:50%;background:#22c55e;display:grid;place-items:center}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:22px;font-weight:600}
+.pill i{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:28px}
+.acts{display:flex;gap:74px;color:#8a817a;margin-top:26px}
+.acts svg{width:28px;height:28px}
+.hlt{background:linear-gradient(#fcd9c4,#fcd9c4) no-repeat;background-size:0% 100%}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#cursor{position:absolute;left:0;top:0;width:40px;height:40px;z-index:50;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3))}
+#ripple{position:absolute;width:70px;height:70px;border-radius:50%;border:4px solid var(--accent);opacity:0;z-index:49}
+</style></head>
+<body>
+<svg style="display:none">
+  <symbol id="i-img" viewBox="0 0 24 24" fill="none"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3h9A2.5 2.5 0 0 1 19 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 18.5v-13Z" stroke="currentColor" stroke-width="1.8"/><path d="m8 15 2.6-2.6a1.2 1.2 0 0 1 1.7 0L15 15m-2-2 1.2-1.2a1.2 1.2 0 0 1 1.7 0L19 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="8" r="1.35" fill="currentColor"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-embed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 12h12M12 6l6 6-6 6"/></symbol>
+  <symbol id="i-reply" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H9l-5 4z" stroke-linejoin="round"/></symbol>
+  <symbol id="i-rt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4 4 7l3 3M4 7h12a3 3 0 0 1 3 3v2M17 20l3-3-3-3M20 17H8a3 3 0 0 1-3-3v-2"/></symbol>
+  <symbol id="i-like" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 4 5 12h4v8h6v-8h4z"/></symbol>
+</svg>
+
+<!-- Scene 1: intro. Fully composed at t=0 so the first frame works as the video cover. -->
+<div class="scene" id="s1">
+  <img id="s1c1" class="abs card" src="cards/reddit-light.png" style="width:470px;left:1330px;top:70px">
+  <img id="s1c2" class="abs card" src="cards/x-image.png" style="width:520px;left:1010px;top:170px">
+  <img id="s1c3" class="abs card" src="cards/quote-light.png" style="width:540px;left:1080px;top:690px">
+  <div id="s1txt" class="abs" style="left:140px;top:230px;width:860px">
+    <div style="display:flex;align-items:center;gap:22px"><img id="s1icon" src="icon.svg" style="width:110px;height:110px"><span class="h" style="font-size:84px">PaperCard</span></div>
+    <div class="h" style="font-size:104px;margin-top:48px">Turn any post into a beautiful image.</div>
+    <div id="s1tag" style="display:flex;gap:14px;margin-top:48px">
+      <span class="pill"><i></i>X</span><span class="pill"><i></i>Reddit</span><span class="pill"><i></i>Any webpage</span>
+    </div>
+  </div>
+</div>
+
+<!-- Scene 2: X share flow -->
+<div class="scene" id="s2">
+  <div id="s2cap" class="abs" style="left:140px;top:120px">
+    <div class="eyebrow">X / Twitter</div>
+    <div class="h" style="font-size:78px;margin-top:16px">One click from<br>the Share menu.</div>
+  </div>
+  <div id="s2post" class="abs panel" style="left:140px;top:430px;width:760px;padding:34px 38px">
+    <div style="display:flex;gap:18px;align-items:center">
+      <div class="av" style="background:linear-gradient(135deg,#f59e0b,#db2777)">M</div>
+      <div><div style="font-weight:700;font-size:26px">Maya Chen</div><div style="color:#8a817a;font-size:22px">@mayabuilds · 2h</div></div>
+    </div>
+    <div style="font-size:27px;line-height:1.45;margin-top:20px">The best productivity trick I learned this year: write the ugly first draft before you open a single tab.</div>
+    <div class="acts"><svg><use href="#i-reply"/></svg><svg><use href="#i-rt"/></svg><svg><use href="#i-like"/></svg><svg id="s2share"><use href="#i-share"/></svg></div>
+  </div>
+  <div id="s2menu" class="abs menu" style="left:470px;top:705px;width:340px">
+    <div class="it"><svg><use href="#i-link"/></svg>Copy link</div>
+    <div class="it"><svg><use href="#i-send"/></svg>Send via DM</div>
+    <div class="it"><svg><use href="#i-embed"/></svg>Embed post</div>
+    <div class="it hl" id="s2item"><span class="bg"></span><span class="bar"></span><svg><use href="#i-img"/></svg>Share as image</div>
+  </div>
+  <img id="s2card" class="abs card" src="cards/x-light.png" style="width:760px;left:1020px;top:250px">
+  <div id="s2toast" class="abs toast" style="left:1150px;top:760px">
+    <div class="check"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="m5 12 5 5 9-10"/></svg></div>
+    Copied to clipboard <b>Download</b></div>
+</div>
+
+<!-- Scene 3: Reddit -->
+<div class="scene" id="s3">
+  <div id="s3cap" class="abs" style="left:140px;top:120px">
+    <div class="eyebrow">New</div>
+    <div class="h" style="font-size:78px;margin-top:16px">Reddit, too.</div>
+  </div>
+  <div id="s3post" class="abs panel" style="left:140px;top:330px;width:720px;padding:30px 36px">
+    <div style="display:flex;gap:14px;align-items:center;font-size:21px;color:#6b6259">
+      <div class="av" style="width:44px;height:44px;font-size:20px;background:linear-gradient(135deg,#ff6a3d,#ff4500)">P</div>
+      <b style="color:var(--ink)">r/productivity</b> · 5h
+    </div>
+    <div style="font-size:31px;font-weight:700;line-height:1.3;margin-top:16px">I stopped checking email before 11am for 30 days. Here's what changed.</div>
+    <div style="display:flex;gap:18px;margin-top:22px;font-size:20px;color:#3f3a35">
+      <span class="pill" style="font-size:19px;padding:9px 18px"><svg width="22" height="22"><use href="#i-up"/></svg>4.8K</span>
+      <span class="pill" style="font-size:19px;padding:9px 18px"><svg width="22" height="22"><use href="#i-reply"/></svg>312</span>
+      <span class="pill" id="s3share" style="font-size:19px;padding:9px 18px"><svg width="22" height="22"><use href="#i-share"/></svg>Share</span>
+    </div>
+  </div>
+  <div id="s3menu" class="abs menu" style="left:440px;top:575px;width:320px">
+    <div class="it"><svg><use href="#i-link"/></svg>Copy link</div>
+    <div class="it hl" id="s3item"><span class="bg"></span><span class="bar"></span><svg><use href="#i-img"/></svg>Share as image</div>
+    <div class="it"><svg><use href="#i-cross"/></svg>Crosspost</div>
+    <div class="it"><svg><use href="#i-embed"/></svg>Embed</div>
+  </div>
+  <img id="s3card" class="abs card" src="cards/reddit-light.png" style="width:640px;left:1120px;top:90px">
+</div>
+
+<!-- Scene 4: any webpage -->
+<div class="scene" id="s4">
+  <div id="s4cap" class="abs" style="left:140px;top:120px">
+    <div class="eyebrow">Any webpage</div>
+    <div class="h" style="font-size:78px;margin-top:16px">Select. Right-click.<br>Share.</div>
+  </div>
+  <div id="s4page" class="abs panel" style="left:140px;top:450px;width:780px;padding:36px 42px">
+    <div style="height:14px;width:40%;background:#e7e2da;border-radius:7px"></div>
+    <p class="serif" style="font-size:28px;line-height:1.7;color:#57534e;margin-top:22px">…most of us wait to feel curious. <span id="s4hl" class="hlt" style="color:var(--ink)">Curiosity is not a personality trait. It is a habit you practice: one question, every day, asked out loud.</span> Start small…</p>
+    <div style="height:10px;width:85%;background:#efeae3;border-radius:5px;margin-top:22px"></div>
+  </div>
+  <div id="s4menu" class="abs menu" style="left:630px;top:655px;width:330px;font-size:21px">
+    <div class="it" style="padding:12px 22px">Copy</div>
+    <div class="it" style="padding:12px 22px">Search Google</div>
+    <div class="it hl" id="s4item" style="padding:12px 22px"><span class="bg"></span><span class="bar"></span><svg><use href="#i-img"/></svg>Create share card</div>
+  </div>
+  <img id="s4card" class="abs card" src="cards/quote-light.png" style="width:760px;left:1040px;top:330px">
+</div>
+
+<!-- Scene 5: outro -->
+<div class="scene" id="s5">
+  <img id="s5a" class="abs card" src="cards/x-dark-qr.png" style="width:540px;left:1230px;top:640px">
+  <img id="s5b" class="abs card" src="cards/reddit-light.png" style="width:400px;left:1390px;top:50px">
+  <img id="s5c" class="abs card" src="cards/quote-zh.png" style="width:540px;left:990px;top:330px">
+  <div id="s5txt" class="abs" style="left:140px;top:250px;width:820px">
+    <div style="display:flex;align-items:center;gap:18px"><img src="icon.svg" style="width:84px;height:84px"><span class="h" style="font-size:64px">PaperCard</span></div>
+    <div class="h" style="font-size:84px;margin-top:40px">Posts to images<br>in one click.</div>
+    <div id="s5pills" style="display:flex;gap:14px;margin-top:44px;flex-wrap:wrap">
+      <span class="pill"><i></i>No watermark</span><span class="pill"><i></i>No sign-up</span><span class="pill"><i></i>100% local</span>
+    </div>
+    <div id="s5cta" style="margin-top:44px;display:inline-flex;align-items:center;gap:14px;background:var(--ink);color:#fff;border-radius:999px;padding:18px 32px;font-size:28px;font-weight:600">Free on the Chrome Web Store</div>
+  </div>
+</div>
+
+<div id="ripple"></div>
+<svg id="cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 19z" fill="#1c1917" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+<div id="flash"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const outCubic = (p) => 1 - Math.pow(1 - p, 3);
+const inOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const outBack = (p) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+
+function sceneOpacity(t, start, end, fade = 0.3) {
+  if (t < start || t > end) return 0;
+  return Math.min(seg(t, start, start + fade), 1 - seg(t, end - fade, end));
+}
+// Element appears with a rise + fade.
+function rise(el, t, start, dur = 0.5, dist = 40) {
+  const p = outCubic(seg(t, start, start + dur));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${(1 - p) * dist}px)`;
+}
+function pop(el, t, start, dur = 0.35, extra = "") {
+  const p = seg(t, start, start + dur);
+  el.style.opacity = clamp(p * 3);
+  el.style.transform = `scale(${lerp(0.85, 1, outBack(p))}) ${extra}`;
+}
+function menuHighlight(item, t, start) {
+  const p = seg(t, start, start + 0.15);
+  item.querySelector(".bg").style.opacity = p;
+  item.querySelector(".bar").style.opacity = p;
+}
+// Cursor path: list of [time, x, y]; clicks: list of times.
+function cursorAt(t, path) {
+  if (t <= path[0][0]) return [path[0][1], path[0][2]];
+  for (let i = 1; i < path.length; i++) {
+    if (t <= path[i][0]) {
+      const p = inOutCubic(seg(t, path[i - 1][0], path[i][0]));
+      return [lerp(path[i - 1][1], path[i][1], p), lerp(path[i - 1][2], path[i][2], p)];
+    }
+  }
+  const last = path[path.length - 1];
+  return [last[1], last[2]];
+}
+const CURSOR = [
+  // Scene 2 (X)
+  [2.7, 1500, 1000], [3.5, 491, 665], [3.8, 491, 665], [4.3, 592, 904], [5.2, 592, 904], [5.8, 1300, 1150],
+  // Scene 3 (Reddit)
+  [7.0, 1100, 1100], [7.5, 480, 540], [7.8, 480, 540], [8.2, 552, 662], [8.9, 552, 662], [9.4, 1200, 1150],
+  // Scene 4 (web)
+  [10.0, 520, 1100], [10.22, 597, 542], [10.95, 619, 637], [11.3, 619, 637], [11.6, 752, 780], [12.2, 752, 780], [12.5, 1300, 1150],
+];
+const CLICKS = [3.6, 4.4, 7.6, 8.3, 11.2, 11.7];
+const CURSOR_VISIBLE = [[2.7, 5.8], [7.0, 9.4], [10.0, 12.5]];
+
+window.render = function render(t) {
+  // Scene 1: starts fully visible (cover frame), drifts gently, exits on the 2.5 s beat.
+  $("s1").style.opacity = t < 2.5 ? 1 - seg(t, 2.2, 2.5) : 0;
+  $("s1txt").style.transform = `translateY(${-10 * seg(t, 0, 2.5)}px) scale(${1 + 0.015 * seg(t, 0, 2.5)})`;
+  $("s1icon").style.transform = `rotate(${Math.sin(t * 2.2) * 4}deg)`;
+  const drift = (el, rot, amp, phase) => {
+    el.style.transform = `translateY(${Math.sin(t * 1.6 + phase) * amp - 16 * seg(t, 0, 2.5)}px) rotate(${rot + Math.sin(t * 1.2 + phase) * 0.8}deg)`;
+  };
+  drift($("s1c1"), 5, 8, 0);
+  drift($("s1c2"), -4, 10, 1.3);
+  drift($("s1c3"), 3, 7, 2.1);
+
+  // Scene 2
+  $("s2").style.opacity = sceneOpacity(t, 2.5, 7.0);
+  rise($("s2cap"), t, 2.55, 0.5);
+  rise($("s2post"), t, 2.65, 0.55, 60);
+  const menu2Open = t >= 3.62 && t < 4.55;
+  $("s2menu").style.display = menu2Open ? "block" : "none";
+  if (menu2Open) pop($("s2menu"), t, 3.62, 0.3);
+  menuHighlight($("s2item"), t, 4.25);
+  $("s2share").style.color = t > 3.4 && t < 4.6 ? "var(--accent)" : "";
+  // card flies out of the post
+  const c2 = seg(t, 4.55, 5.25);
+  const c2e = outCubic(c2);
+  $("s2card").style.opacity = clamp(c2 * 4);
+  $("s2card").style.transform = `translate(${lerp(-420, 0, c2e)}px, ${lerp(260, 0, c2e)}px) scale(${lerp(0.35, 1, c2e)}) rotate(${lerp(-8, 2, c2e)}deg)`;
+  const tp = outBack(seg(t, 5.2, 5.55));
+  $("s2toast").style.opacity = clamp(seg(t, 5.2, 5.35));
+  $("s2toast").style.transform = `translateY(${(1 - tp) * 50}px) scale(${lerp(0.9, 1, tp)})`;
+  $("s2post").style.filter = t > 4.6 ? `saturate(${1 - 0.3 * seg(t, 4.6, 5)})` : "";
+
+  // Scene 3
+  $("s3").style.opacity = sceneOpacity(t, 7.0, 10.0);
+  rise($("s3cap"), t, 7.05, 0.45);
+  rise($("s3post"), t, 7.1, 0.45, 60);
+  const menu3Open = t >= 7.62 && t < 8.45;
+  $("s3menu").style.display = menu3Open ? "block" : "none";
+  if (menu3Open) pop($("s3menu"), t, 7.62, 0.28);
+  menuHighlight($("s3item"), t, 8.15);
+  const c3 = outCubic(seg(t, 8.4, 9.05));
+  $("s3card").style.opacity = clamp(seg(t, 8.4, 8.6));
+  $("s3card").style.transform = `translateX(${(1 - c3) * 520}px) rotate(${lerp(8, 2, c3)}deg)`;
+
+  // Scene 4
+  $("s4").style.opacity = sceneOpacity(t, 10.0, 12.5);
+  rise($("s4cap"), t, 10.02, 0.45);
+  rise($("s4page"), t, 10.05, 0.45, 60);
+  $("s4hl").style.backgroundSize = `${seg(t, 10.25, 10.95) * 100}% 100%`;
+  const menu4Open = t >= 11.22 && t < 11.8;
+  $("s4menu").style.display = menu4Open ? "block" : "none";
+  if (menu4Open) pop($("s4menu"), t, 11.22, 0.25);
+  menuHighlight($("s4item"), t, 11.55);
+  const c4 = seg(t, 11.8, 12.3);
+  $("s4card").style.opacity = clamp(c4 * 4);
+  $("s4card").style.transform = `scale(${lerp(0.7, 1, outBack(c4))}) rotate(${lerp(-6, -1.5, outCubic(c4))}deg)`;
+
+  // Scene 5
+  $("s5").style.opacity = t >= 12.5 ? clamp(seg(t, 12.5, 12.8)) : 0;
+  rise($("s5txt"), t, 12.55, 0.55, 40);
+  const fan = (el, start, rot, dx) => {
+    const p = outBack(seg(t, start, start + 0.55));
+    el.style.opacity = clamp(seg(t, start, start + 0.2));
+    el.style.transform = `translate(${(1 - p) * dx}px, ${(1 - p) * 120}px) rotate(${rot * p}deg)`;
+  };
+  fan($("s5b"), 12.6, 5, 200);
+  fan($("s5c"), 12.75, -4, 260);
+  fan($("s5a"), 12.9, 3, 320);
+  const cta = outBack(seg(t, 13.3, 13.7));
+  $("s5cta").style.opacity = clamp(seg(t, 13.3, 13.45));
+  $("s5cta").style.transform = `scale(${lerp(0.8, 1, cta)})`;
+  // gentle final push-in
+  $("s5").style.transform = `scale(${1 + 0.02 * seg(t, 13, 15)})`;
+
+  // Cursor + click ripple
+  const visible = CURSOR_VISIBLE.find(([a, b]) => t >= a && t <= b);
+  const [cx, cy] = cursorAt(t, CURSOR);
+  const cursor = $("cursor");
+  cursor.style.opacity = visible ? Math.min(seg(t, visible[0], visible[0] + 0.2), 1 - seg(t, visible[1] - 0.25, visible[1])) : 0;
+  const pressed = CLICKS.some((c) => t >= c && t < c + 0.12);
+  cursor.style.transform = `translate(${cx}px, ${cy}px) scale(${pressed ? 0.85 : 1})`;
+  const click = CLICKS.find((c) => t >= c && t < c + 0.45);
+  const rp = click ? seg(t, click, click + 0.45) : 0;
+  const ripple = $("ripple");
+  ripple.style.opacity = click ? 1 - rp : 0;
+  ripple.style.transform = `translate(${cx - 29}px, ${cy - 29}px) scale(${0.3 + rp * 1.1})`;
+
+  // Scene-cut flash when the X card is created
+  $("flash").style.opacity = 0.55 * (1 - seg(t, 4.5, 4.8)) * (t >= 4.5 ? 1 : 0);
+};
+window.render(Number(new URLSearchParams(location.search).get("t") || 0));
+</script>
+</body></html>

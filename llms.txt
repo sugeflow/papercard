@@ -1,0 +1,26 @@
+# PaperCard
+
+> PaperCard is a free, open-source (MIT) Chrome extension that turns social media posts and selected web text into clean, book-style PNG image cards and copies them to the clipboard in one click. It runs entirely in the browser: no account, no watermark, no server.
+
+PaperCard adds "Copy as image" to the Share menu on X (Twitter) and Reddit, and "Copy post as image" to the right-click menu on X, Reddit, Threads, Instagram, Bluesky, Weibo, Zhihu and Xiaohongshu (RED). On any other website, selecting text and choosing "Copy selection as image" makes a quote card with the site name, date and link. The keyboard shortcut is Alt+Shift+S.
+
+Cards include the author, avatar, text, images, date and optional stats (likes, reposts, replies, views, bookmarks, upvotes, comments), an optional QR code to the original post, and a small platform logo. There are 4 styles (Paper, Minimal, Magazine, Gradient), light and dark themes, and sizes Auto, 1:1, 4:5 and 9:16. Cards export at 1440 px wide. A sentence selected inside a post becomes a quote card that still credits the post's author. An author's X thread can be combined into one card.
+
+Common questions it answers: how to turn a tweet into an image, how to screenshot a Reddit post cleanly, how to make a quote card from a web page, a private alternative to online tweet-to-image websites.
+
+## Docs
+
+- [README](https://github.com/sugeflow/papercard/blob/main/README.md): features, supported sites, install and FAQ
+- [简体中文 README](https://github.com/sugeflow/papercard/blob/main/README.zh-CN.md)
+- [Development notes](https://github.com/sugeflow/papercard/blob/main/docs/DEVELOPMENT.md): architecture and per-site details
+- [Changelog](https://github.com/sugeflow/papercard/blob/main/CHANGELOG.md)
+- [Privacy policy](https://github.com/sugeflow/papercard/blob/main/store/privacy.html)
+
+## Install
+
+- [Latest release](https://github.com/sugeflow/papercard/releases/latest): download papercard.zip, unzip, then load it unpacked in chrome://extensions with Developer mode on.
+
+## Optional
+
+- [Source code](https://github.com/sugeflow/papercard/tree/main/src)
+- [License (MIT)](https://github.com/sugeflow/papercard/blob/main/LICENSE)

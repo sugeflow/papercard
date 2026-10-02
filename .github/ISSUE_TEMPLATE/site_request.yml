@@ -1,0 +1,21 @@
+name: Site request
+description: Ask for PaperCard to support another website.
+labels: [site request]
+body:
+  - type: input
+    id: site
+    attributes:
+      label: Website
+      placeholder: linkedin.com
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Link to a public example post
+      description: Posts that can be read without logging in are much easier to support.
+  - type: textarea
+    id: card
+    attributes:
+      label: What should be on the card?
+      placeholder: Author, text, images, likes…
