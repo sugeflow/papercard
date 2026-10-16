@@ -144,3 +144,16 @@ test("normalizeShareSettings shows the platform icon unless it is turned off", (
   assert.equal(core.normalizeShareSettings({}).showPlatformIcon, true);
   assert.equal(core.normalizeShareSettings({ showPlatformIcon: false }).showPlatformIcon, false);
 });
+
+test("normalizeTweetData keeps a quoted post separate from the outer text", () => {
+  const data = core.normalizeTweetData({
+    authorName: "a",
+    text: "outer",
+    quote: { authorName: "b", authorHandle: "b", text: " inner ", media: [{ src: "https://pbs.twimg.com/media/q?name=small", video: true }] }
+  });
+  assert.equal(data.text, "outer");
+  assert.equal(data.quote.text, "inner");
+  assert.equal(data.quote.authorHandle, "@b");
+  assert.equal(data.quote.media[0].video, true);
+  assert.equal(core.normalizeTweetData({ quote: { text: "  " } }).quote, null);
+});

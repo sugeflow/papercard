@@ -12,6 +12,7 @@
   // ratios for feeds that crop (Instagram/Xiaohongshu 4:5, stories 9:16).
   const RATIOS = ["auto", "1:1", "4:5", "9:16"];
   const MAX_TEXT_CHARS = 1200;
+  const MAX_QUOTE_CHARS = 360;
   const DEFAULT_SHARE_SETTINGS = {
     template: "paper",
     theme: "light",
@@ -94,7 +95,8 @@
 
       items.push({
         src,
-        alt: normalizeWhitespace(item && item.alt)
+        alt: normalizeWhitespace(item && item.alt),
+        ...(item && item.video ? { video: true } : {})
       });
     }
 
@@ -185,9 +187,25 @@
     return (Array.isArray(parts) ? parts : [])
       .map((part) => ({
         text: clampText(normalizeWhitespace(part && part.text)),
-        media: normalizeMedia(part && part.media)
+        media: normalizeMedia(part && part.media),
+        quote: normalizeQuote(part && part.quote)
       }))
-      .filter((part) => part.text || part.media.length);
+      .filter((part) => part.text || part.media.length || part.quote);
+  }
+
+  // A quoted post renders as a nested card, so it keeps its own author and
+  // media instead of being merged into the outer post's text.
+  function normalizeQuote(quote) {
+    if (!quote) return null;
+    const data = {
+      authorName: normalizeWhitespace(quote.authorName),
+      authorHandle: normalizeHandle(quote.authorHandle),
+      avatarUrl: String(quote.avatarUrl || "").trim(),
+      text: clampText(normalizeWhitespace(quote.text), MAX_QUOTE_CHARS),
+      media: normalizeMedia(quote.media).slice(0, 4),
+      createdAtLabel: normalizeWhitespace(quote.createdAtLabel)
+    };
+    return data.authorName || data.authorHandle || data.text || data.media.length ? data : null;
   }
 
   function normalizeTweetData(tweet) {
@@ -199,6 +217,7 @@
       title: normalizeWhitespace(data.title),
       text: clampText(normalizeWhitespace(data.text)),
       media: normalizeMedia(data.media),
+      quote: normalizeQuote(data.quote),
       parts: normalizeParts(data.parts),
       stats: normalizeStats(data.stats),
       createdAtLabel: normalizeWhitespace(data.createdAtLabel),
@@ -388,6 +407,7 @@
     normalizeHandle,
     normalizeShareSettings,
     normalizeMedia,
+    normalizeQuote,
     normalizeStats,
     normalizeTweetData,
     normalizeWhitespace,

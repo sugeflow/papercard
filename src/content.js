@@ -242,7 +242,7 @@
 
       showGeneratingToast();
       const tweet = await extractPost(post);
-      if (!tweet.text && !tweet.title && !tweet.media.length) {
+      if (!tweet.text && !tweet.title && !tweet.media.length && !tweet.quote) {
         safeShowToast(t("toastNoPost", "Couldn't find this post. Right-click directly on the post and retry."));
         return;
       }
@@ -313,11 +313,11 @@
       for (const article of articles) {
         await expandTweetIfNeeded(article);
         const tweet = extractTweetData(article);
-        parts.push({ text: tweet.text, media: tweet.media });
+        parts.push({ text: tweet.text, media: tweet.media, quote: tweet.quote });
       }
       const first = extractTweetData(articles[0]);
       state.lastThread = null;
-      await produceCard(normalizeTweetData({ ...first, text: "", media: [], parts }));
+      await produceCard(normalizeTweetData({ ...first, text: "", media: [], quote: null, parts }));
     } catch (error) {
       console.error("[PaperCard] Failed to create thread image", error);
       safeShowToast(t("toastFailed", "Couldn't create the image. Please try again."), state.lastPngBlob);
@@ -458,17 +458,19 @@
   }
 
   function extractTweetData(article) {
+    const quoteBox = findQuoteContainer(article);
+    const own = (node) => !quoteBox || !quoteBox.contains(node);
     const userName = article.querySelector('[data-testid="User-Name"]');
     const authorName =
       readText(userName && userName.querySelector("a[role='link'] span")) ||
       readText(userName && userName.querySelector("span"));
     const authorHandle = extractHandle(userName);
-    const textNodes = [...article.querySelectorAll('[data-testid="tweetText"]')];
+    const textNodes = [...article.querySelectorAll('[data-testid="tweetText"]')].filter(own);
     const text = textNodes.map((node) => node.innerText || node.textContent || "").join("\n");
-    const time = article.querySelector("time");
+    const time = [...article.querySelectorAll("time")].find(own) || null;
     const sourceUrl = resolveTweetUrl(article, time);
     const avatarUrl = resolveImageSrc(article.querySelector('img[src*="profile_images"]'));
-    const media = extractMedia(article);
+    const media = extractMedia(article).filter((item) => own(item.node)).map(({ node, ...item }) => item);
     const stats = extractStats(article);
 
     return normalizeTweetData({
@@ -478,11 +480,65 @@
       text,
       media,
       stats,
+      quote: quoteBox ? extractQuoteData(quoteBox) : null,
       createdAtLabel: resolveCreatedAtLabel(time),
       sourceUrl,
       sourceLabel: "x.com",
       platform: "x"
     });
+  }
+
+  // A quoted post is not its own <article>: X nests it as a clickable
+  // div[role="link"] (tabindex 0) inside the outer post, holding its own
+  // author row, text and media. Link-preview cards are <a>, so they don't match.
+  function findQuoteContainer(article) {
+    const mainName = article.querySelector('[data-testid="User-Name"]');
+    return (
+      [...article.querySelectorAll('div[role="link"]')].find(
+        (box) =>
+          box.closest("article") === article &&
+          !(mainName && box.contains(mainName)) &&
+          looksLikeQuotedPost(box)
+      ) || null
+    );
+  }
+
+  function looksLikeQuotedPost(box) {
+    if (box.querySelector('[data-testid="User-Name"], [data-testid="tweetText"], time')) return true;
+    return [...box.querySelectorAll("span")].some((node) => /^@\w{1,15}$/.test(readText(node)));
+  }
+
+  function extractQuoteData(box) {
+    const userName = box.querySelector('[data-testid="User-Name"]') || box;
+    const spans = [...userName.querySelectorAll("span")].map(readText).filter(Boolean);
+    const authorHandle = spans.find((text) => /^@\w{1,15}$/.test(text)) || "";
+    const time = box.querySelector("time");
+    const textNodes = [...box.querySelectorAll('[data-testid="tweetText"]')];
+    const text = textNodes.length
+      ? textNodes.map((node) => node.innerText || node.textContent || "").join("\n")
+      : quoteTextFromLines(box, authorHandle, readText(time));
+
+    return {
+      authorName: spans.find((text) => !text.startsWith("@") && text !== "·") || "",
+      authorHandle,
+      avatarUrl: resolveImageSrc(box.querySelector('img[src*="profile_images"]')),
+      text,
+      media: extractMedia(box).map(({ node, ...item }) => item),
+      createdAtLabel: time ? resolveCreatedAtLabel(time) : ""
+    };
+  }
+
+  // Without a tweetText node, the body is whatever follows the
+  // "name / @handle / · / date" header lines of the quote box.
+  function quoteTextFromLines(box, handle, timeText) {
+    const lines = String(box.innerText || "").split("\n").map((line) => line.trim()).filter(Boolean);
+    let start = handle ? lines.indexOf(handle) + 1 : 0;
+    while (start < lines.length && (lines[start] === "·" || lines[start] === timeText || isShortDateLine(lines[start]))) start += 1;
+    return lines.slice(start).join("\n");
+  }
+
+  function isShortDateLine(line) {
+    return /^(?:\d+[smhd]|[A-Z][a-z]{2} \d{1,2}(?:, \d{4})?|\d{1,2}月\d{1,2}日|\d{4}年\d{1,2}月\d{1,2}日|\d+\s*(?:秒|分钟|小时|天)前?)$/.test(line);
   }
 
   async function expandTweetIfNeeded(article) {
@@ -511,11 +567,18 @@
     return candidates[0] || "";
   }
 
-  function extractMedia(article) {
-    const images = [...article.querySelectorAll('[data-testid="tweetPhoto"] img, img[src*="pbs.twimg.com/media"]')];
-    return images.map((img) => ({
-      src: resolveImageSrc(img),
-      alt: img.alt || ""
+  // Video posters are kept (marked `video`) so the card can draw a play badge.
+  function extractMedia(root) {
+    const nodes = [
+      ...root.querySelectorAll(
+        '[data-testid="tweetPhoto"] img, img[src*="pbs.twimg.com/media"], img[src*="video_thumb"], video[poster]'
+      )
+    ];
+    return nodes.map((node) => ({
+      node,
+      src: node.tagName === "VIDEO" ? node.getAttribute("poster") : resolveImageSrc(node),
+      alt: node.alt || "",
+      video: node.tagName === "VIDEO" || /video_thumb/.test(node.src || "") || Boolean(node.closest('[data-testid="videoPlayer"], [data-testid="videoComponent"]'))
     }));
   }
 
@@ -975,12 +1038,28 @@
   }
 
   async function hydrateMedia(tweet) {
-    const [avatarUrl, media, parts] = await Promise.all([
+    const [avatarUrl, media, quote, parts] = await Promise.all([
       tweet.avatarUrl ? imageUrlToDataUrl(tweet.avatarUrl) : "",
       hydrateMediaList(tweet.media || []),
-      Promise.all((tweet.parts || []).map(async (part) => ({ ...part, media: await hydrateMediaList(part.media) })))
+      hydrateQuote(tweet.quote),
+      Promise.all(
+        (tweet.parts || []).map(async (part) => ({
+          ...part,
+          media: await hydrateMediaList(part.media),
+          quote: await hydrateQuote(part.quote)
+        }))
+      )
     ]);
-    return { ...tweet, avatarUrl, media, parts };
+    return { ...tweet, avatarUrl, media, quote, parts };
+  }
+
+  async function hydrateQuote(quote) {
+    if (!quote) return null;
+    const [avatarUrl, media] = await Promise.all([
+      quote.avatarUrl ? imageUrlToDataUrl(quote.avatarUrl) : "",
+      hydrateMediaList(quote.media || [])
+    ]);
+    return { ...quote, avatarUrl, media };
   }
 
   async function hydrateMediaList(items) {

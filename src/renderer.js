@@ -10,6 +10,8 @@
   const EXPORT_SCALE = 2;
   const QR_CODE_SIZE = 76;
   const MEDIA_GAP = 14;
+  const QUOTE_PAD = 20;
+  const QUOTE_AVATAR = 26;
   // Very tall images (long screenshots, comics) are cropped from the top so a
   // single picture can't turn the card into a scroll.
   const MAX_MEDIA_RATIO = 1.6;
@@ -216,14 +218,18 @@
 
   function contentParts(tweet) {
     if (tweet.parts && tweet.parts.length) return tweet.parts;
-    return [{ text: tweet.text || "", media: tweet.media || [] }];
+    return [{ text: tweet.text || "", media: tweet.media || [], quote: tweet.quote || null }];
   }
 
   async function renderToCanvas(tweet, settings) {
     const style = resolveStyle(settings);
     const parts = [];
     for (const part of contentParts(tweet)) {
-      parts.push({ text: part.text || "", media: await loadRenderableImages(part.media || [], style.contentWidth) });
+      parts.push({
+        text: part.text || "",
+        media: await loadRenderableImages(part.media || [], style.contentWidth),
+        quote: await loadQuote(part.quote)
+      });
     }
     const avatar = tweet.avatarUrl ? await loadImage(tweet.avatarUrl) : null;
     const measureCtx = document.createElement("canvas").getContext("2d");
@@ -289,6 +295,16 @@
     return loaded;
   }
 
+  async function loadQuote(quote) {
+    if (!quote) return null;
+    const media = [];
+    for (const item of quote.media || []) {
+      const image = await loadImage(item.src);
+      if (image && image.naturalWidth) media.push({ image, video: Boolean(item.video) });
+    }
+    return { ...quote, avatar: quote.avatarUrl ? await loadImage(quote.avatarUrl) : null, media };
+  }
+
   function loadImage(src) {
     return new Promise((resolve) => {
       const image = new Image();
@@ -324,9 +340,10 @@
       const lines = wrapParagraphs(ctx, tweet.title, width);
       blocks.push({ type: "lines", y, lines, font: style.title.font, lineHeight: style.title.lineHeight, color: "name" });
       y += lines.length * style.title.lineHeight;
-      if (parts.some((part) => part.text || part.media.length)) y += 16;
+      if (parts.some(hasContent)) y += 16;
     }
 
+    const hasContent = (part) => part.text || part.media.length || part.quote;
     parts.forEach((part, index) => {
       if (index > 0) {
         y += 22;
@@ -348,6 +365,13 @@
           y += item.height + MEDIA_GAP;
         }
         y -= MEDIA_GAP;
+      }
+
+      if (part.quote) {
+        if (part.text || part.media.length) y += 24;
+        const quote = measureQuote(ctx, part.quote, width, style);
+        blocks.push({ type: "quoteCard", y, quote });
+        y += quote.height;
       }
     });
 
@@ -411,6 +435,8 @@
         block.lines.forEach((line, index) => ctx.fillText(line, left, y + index * block.lineHeight));
       } else if (block.type === "media") {
         drawRoundedImage(ctx, block.item.image, left, y, block.item.width, block.item.height, 10);
+      } else if (block.type === "quoteCard") {
+        drawQuoteCard(ctx, block.quote, left, y, style);
       } else if (block.type === "divider") {
         ctx.fillStyle = colors.line;
         for (let dot = 0; dot < 3; dot += 1) {
@@ -434,6 +460,135 @@
         }
       }
     }
+  }
+
+  // The quoted post: a rounded, outlined box (as on X) with a small author
+  // row, body text one step smaller than the card's, and its media.
+  function quoteFonts(style) {
+    const size = Number((/(\d+)px/.exec(style.body.font) || [])[1]) || 28;
+    const scale = 0.76;
+    return {
+      body: style.body.font.replace(/^italic\s+/, "").replace(/\d+px/, `${Math.round(size * scale)}px`),
+      lineHeight: Math.round(style.body.lineHeight * scale)
+    };
+  }
+
+  function measureQuote(ctx, quote, width, style) {
+    const inner = width - QUOTE_PAD * 2;
+    const fonts = quoteFonts(style);
+    let y = QUOTE_PAD + QUOTE_AVATAR;
+    let lines = [];
+    if (quote.text) {
+      ctx.font = fonts.body;
+      lines = wrapParagraphs(ctx, quote.text, inner);
+      y += 12 + lines.length * fonts.lineHeight;
+    }
+
+    let mediaHeight = 0;
+    if (quote.media.length) {
+      const count = quote.media.length;
+      const tile = (inner - MEDIA_GAP * (count - 1)) / count;
+      const first = quote.media[0].image;
+      mediaHeight =
+        count === 1
+          ? Math.min(Math.round((inner * first.naturalHeight) / first.naturalWidth), Math.round(inner * 0.75))
+          : Math.round(Math.min(tile, 220));
+      y += 14 + mediaHeight;
+    }
+
+    return { ...quote, lines, fonts, inner, mediaHeight, width, height: y + QUOTE_PAD };
+  }
+
+  function drawQuoteCard(ctx, quote, x, y, style) {
+    const { colors } = style;
+    ctx.save();
+    roundedRectPath(ctx, x + 0.5, y + 0.5, quote.width - 1, quote.height - 1, 16);
+    ctx.strokeStyle = colors.border || colors.line;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    const left = x + QUOTE_PAD;
+    let top = y + QUOTE_PAD;
+    const size = QUOTE_AVATAR;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(left + size / 2, top + size / 2, size / 2, 0, Math.PI * 2);
+    if (quote.avatar) {
+      ctx.clip();
+      ctx.drawImage(quote.avatar, left, top, size, size);
+    } else {
+      ctx.fillStyle = colors.avatar;
+      ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.textBaseline = "middle";
+    const textX = left + size + 10;
+    const maxWidth = quote.inner - size - 10;
+    const name = quote.authorName || quote.authorHandle;
+    ctx.font = `700 17px ${SANS}`;
+    ctx.fillStyle = colors.name;
+    const nameText = truncateText(ctx, name, maxWidth * 0.6);
+    ctx.fillText(nameText, textX, top + size / 2);
+    const meta = [quote.authorName ? quote.authorHandle : "", quote.createdAtLabel].filter(Boolean).join(" · ");
+    if (meta) {
+      const metaX = textX + ctx.measureText(nameText).width + 8;
+      ctx.font = `16px ${SANS}`;
+      ctx.fillStyle = colors.handle;
+      ctx.fillText(truncateText(ctx, meta, textX + maxWidth - metaX), metaX, top + size / 2);
+    }
+    ctx.textBaseline = "top";
+    top += size;
+
+    if (quote.lines.length) {
+      top += 12;
+      ctx.fillStyle = colors.text;
+      ctx.font = quote.fonts.body;
+      quote.lines.forEach((line, index) => ctx.fillText(line, left, top + index * quote.fonts.lineHeight));
+      top += quote.lines.length * quote.fonts.lineHeight;
+    }
+
+    if (quote.media.length) {
+      top += 14;
+      const count = quote.media.length;
+      const tile = (quote.inner - MEDIA_GAP * (count - 1)) / count;
+      quote.media.forEach((item, index) => {
+        const tileX = left + index * (tile + MEDIA_GAP);
+        drawCoverImage(ctx, item.image, tileX, top, tile, quote.mediaHeight, 10);
+        if (item.video) drawPlayBadge(ctx, tileX + tile / 2, top + quote.mediaHeight / 2);
+      });
+    }
+  }
+
+  // Centre-crops the image to fill the box.
+  function drawCoverImage(ctx, image, x, y, width, height, radius) {
+    const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+    const sw = width / scale;
+    const sh = height / scale;
+    ctx.save();
+    roundedRectPath(ctx, x, y, width, height, radius);
+    ctx.clip();
+    ctx.drawImage(image, (image.naturalWidth - sw) / 2, (image.naturalHeight - sh) / 2, sw, sh, x, y, width, height);
+    ctx.restore();
+  }
+
+  function drawPlayBadge(ctx, cx, cy) {
+    const r = 26;
+    ctx.save();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy - 12);
+    ctx.lineTo(cx + 13, cy);
+    ctx.lineTo(cx - 8, cy + 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
   }
 
   function platformIcon(tweet, settings) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Quoted posts on X now render as a nested card (author, date, text and media, with a play badge on videos) instead of being merged into the main post's text and images.
+
 ## 1.3.0 — 2026-10-02
 
 - **Copy as image** now matches X's own share menu (font, spacing, hover) and closes the menu after you click it.
