@@ -174,3 +174,13 @@ test("wrapCardText breaks CJK after any character, even right after a Latin word
   const lines = core.wrapCardText(ctx, "这些AI会假装成各种人", 60);
   assert.equal(lines[0], "这些AI会假");
 });
+
+test("normalizeTweetData asks X for the 400px avatar", () => {
+  const data = core.normalizeTweetData({
+    avatarUrl: "https://pbs.twimg.com/profile_images/1/abc_normal.jpg",
+    quote: { text: "q", avatarUrl: "https://pbs.twimg.com/profile_images/2/def_bigger.png" }
+  });
+  assert.equal(data.avatarUrl, "https://pbs.twimg.com/profile_images/1/abc_400x400.jpg");
+  assert.equal(data.quote.avatarUrl, "https://pbs.twimg.com/profile_images/2/def_400x400.png");
+  assert.equal(core.preferLargeAvatar("https://example.com/a_normal.jpg"), "https://example.com/a_normal.jpg");
+});

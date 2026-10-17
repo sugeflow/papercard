@@ -92,6 +92,14 @@
     }
   }
 
+  // X serves avatars as 48px "_normal" files by default; the card draws them
+  // at up to ~104 device pixels, so ask for the 400px variant instead.
+  function preferLargeAvatar(src) {
+    const value = String(src || "").trim();
+    if (!/^https:\/\/pbs\.twimg\.com\/profile_images\//.test(value)) return value;
+    return value.replace(/_(?:normal|bigger|mini|x96|200x200)(\.[a-z]+)?(?=$|\?)/i, "_400x400$1");
+  }
+
   function normalizeMedia(media) {
     const seen = new Set();
     const items = [];
@@ -223,7 +231,7 @@
     const data = {
       authorName: normalizeWhitespace(quote.authorName),
       authorHandle: normalizeHandle(quote.authorHandle),
-      avatarUrl: String(quote.avatarUrl || "").trim(),
+      avatarUrl: preferLargeAvatar(quote.avatarUrl),
       text: clampText(normalizeBody(quote.text), MAX_QUOTE_CHARS),
       media: normalizeMedia(quote.media).slice(0, 4),
       createdAtLabel: normalizeWhitespace(quote.createdAtLabel)
@@ -236,7 +244,7 @@
     return {
       authorName: normalizeWhitespace(data.authorName) || DEFAULT_AUTHOR,
       authorHandle: normalizeHandle(data.authorHandle),
-      avatarUrl: String(data.avatarUrl || "").trim(),
+      avatarUrl: preferLargeAvatar(data.avatarUrl),
       title: normalizeWhitespace(data.title),
       text: clampText(normalizeBody(data.text)),
       media: normalizeMedia(data.media),
@@ -434,6 +442,7 @@
     normalizeShareSettings,
     normalizeMedia,
     normalizeLink,
+    preferLargeAvatar,
     normalizeQuote,
     normalizeStats,
     normalizeTweetData,

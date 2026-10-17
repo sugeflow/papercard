@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Several images share one box like on X (side by side, one tall plus two, 2×2) instead of stacking full width; longer galleries continue in rows of two.
+- Video covers in the main post get a play badge.
+- X avatars use the 400px image, so they're no longer blurry.
 - Quoted posts on X now render as a nested card (author, date, text and media, with a play badge on videos) instead of being merged into the main post's text and images.
 - Link previews on X render as a card (image, domain, title) instead of being dropped.
 - Chinese and Japanese text wraps at any character, so a line no longer ends early after a Latin word; paragraph breaks are kept as a gap.

@@ -10,6 +10,7 @@
   const EXPORT_SCALE = 2;
   const QR_CODE_SIZE = 76;
   const MEDIA_GAP = 14;
+  const GRID_GAP = 6;
   const QUOTE_PAD = 20;
   const QUOTE_AVATAR = 26;
   // Very tall images (long screenshots, comics) are cropped from the top so a
@@ -293,7 +294,12 @@
       const image = await loadImage(item.src);
       if (!image || !image.naturalWidth) continue;
       const naturalHeight = Math.round((width * image.naturalHeight) / image.naturalWidth);
-      loaded.push({ image, width, height: Math.min(naturalHeight, Math.round(width * MAX_MEDIA_RATIO)) });
+      loaded.push({
+        image,
+        width,
+        height: Math.min(naturalHeight, Math.round(width * MAX_MEDIA_RATIO)),
+        video: Boolean(item.video)
+      });
     }
     return loaded;
   }
@@ -367,13 +373,15 @@
         y += linesHeight(lines, style.body.lineHeight);
       }
 
-      if (part.media.length) {
+      if (part.media.length === 1) {
         if (part.text) y += 26;
-        for (const item of part.media) {
-          blocks.push({ type: "media", y, item });
-          y += item.height + MEDIA_GAP;
-        }
-        y -= MEDIA_GAP;
+        blocks.push({ type: "media", y, item: part.media[0] });
+        y += part.media[0].height;
+      } else if (part.media.length > 1) {
+        if (part.text) y += 26;
+        const grid = mediaGrid(part.media, width);
+        blocks.push({ type: "mediaGrid", y, tiles: grid.tiles });
+        y += grid.height;
       }
 
       if (part.link) {
@@ -451,6 +459,12 @@
         drawLines(ctx, block.lines, left, y, block.lineHeight);
       } else if (block.type === "media") {
         drawRoundedImage(ctx, block.item.image, left, y, block.item.width, block.item.height, 10);
+        if (block.item.video) drawPlayBadge(ctx, left + block.item.width / 2, y + block.item.height / 2);
+      } else if (block.type === "mediaGrid") {
+        for (const tile of block.tiles) {
+          drawCoverImage(ctx, tile.image, left + tile.x, y + tile.y, tile.w, tile.h, 10);
+          if (tile.video) drawPlayBadge(ctx, left + tile.x + tile.w / 2, y + tile.y + tile.h / 2);
+        }
       } else if (block.type === "linkCard") {
         drawLinkCard(ctx, block.link, left, y, style);
       } else if (block.type === "quoteCard") {
@@ -505,7 +519,7 @@
     let mediaHeight = 0;
     if (quote.media.length) {
       const count = quote.media.length;
-      const tile = (inner - MEDIA_GAP * (count - 1)) / count;
+      const tile = (inner - GRID_GAP * (count - 1)) / count;
       const first = quote.media[0].image;
       mediaHeight =
         count === 1
@@ -571,13 +585,55 @@
     if (quote.media.length) {
       top += 14;
       const count = quote.media.length;
-      const tile = (quote.inner - MEDIA_GAP * (count - 1)) / count;
+      const tile = (quote.inner - GRID_GAP * (count - 1)) / count;
       quote.media.forEach((item, index) => {
-        const tileX = left + index * (tile + MEDIA_GAP);
+        const tileX = left + index * (tile + GRID_GAP);
         drawCoverImage(ctx, item.image, tileX, top, tile, quote.mediaHeight, 10);
         if (item.video) drawPlayBadge(ctx, tileX + tile / 2, top + quote.mediaHeight / 2);
       });
     }
+  }
+
+  // Several images share one box the way X lays them out: two side by side,
+  // three as one tall plus two stacked, four as 2×2, all centre-cropped.
+  // Longer galleries (Reddit, Xiaohongshu) continue in rows of two.
+  function mediaGrid(media, width) {
+    const half = (width - GRID_GAP) / 2;
+    const box = Math.round(width * 0.6);
+    const tile = (item, x, y, w, h) => ({ image: item.image, video: item.video, x, y, w, h });
+
+    if (media.length <= 4) {
+      const [a, b, c, d] = media;
+      const short = (box - GRID_GAP) / 2;
+      const right = half + GRID_GAP;
+      const tiles =
+        media.length === 2
+          ? [tile(a, 0, 0, half, box), tile(b, right, 0, half, box)]
+          : media.length === 3
+            ? [tile(a, 0, 0, half, box), tile(b, right, 0, half, short), tile(c, right, short + GRID_GAP, half, short)]
+            : [
+                tile(a, 0, 0, half, short),
+                tile(b, right, 0, half, short),
+                tile(c, 0, short + GRID_GAP, half, short),
+                tile(d, right, short + GRID_GAP, half, short)
+              ];
+      return { tiles, height: box };
+    }
+
+    const tiles = [];
+    const rowHeight = Math.round(half * 0.75);
+    let y = 0;
+    for (let index = 0; index < media.length; index += 2) {
+      if (index + 1 < media.length) {
+        tiles.push(tile(media[index], 0, y, half, rowHeight), tile(media[index + 1], half + GRID_GAP, y, half, rowHeight));
+        y += rowHeight + GRID_GAP;
+      } else {
+        const h = Math.round(width * 0.5);
+        tiles.push(tile(media[index], 0, y, width, h));
+        y += h + GRID_GAP;
+      }
+    }
+    return { tiles, height: y - GRID_GAP };
   }
 
   // A link preview, laid out like X's card: the image across the top, then
