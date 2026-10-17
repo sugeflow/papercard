@@ -17,6 +17,8 @@
   const MAX_MEDIA_RATIO = 1.6;
   const SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
   const SERIF = 'Georgia, "Times New Roman", "Songti SC", "STSong", "Noto Serif CJK SC", serif';
+  const LINK_TITLE_FONT = `600 19px ${SANS}`;
+  const LINK_TEXT_FONT = `16px ${SANS}`;
 
   // Each template decides layout and type; `theme` (light/dark) picks its palette.
   const TEMPLATES = {
@@ -218,7 +220,7 @@
 
   function contentParts(tweet) {
     if (tweet.parts && tweet.parts.length) return tweet.parts;
-    return [{ text: tweet.text || "", media: tweet.media || [], quote: tweet.quote || null }];
+    return [{ text: tweet.text || "", media: tweet.media || [], quote: tweet.quote || null, link: tweet.link || null }];
   }
 
   async function renderToCanvas(tweet, settings) {
@@ -228,7 +230,8 @@
       parts.push({
         text: part.text || "",
         media: await loadRenderableImages(part.media || [], style.contentWidth),
-        quote: await loadQuote(part.quote)
+        quote: await loadQuote(part.quote),
+        link: await loadLink(part.link)
       });
     }
     const avatar = tweet.avatarUrl ? await loadImage(tweet.avatarUrl) : null;
@@ -305,6 +308,12 @@
     return { ...quote, avatar: quote.avatarUrl ? await loadImage(quote.avatarUrl) : null, media };
   }
 
+  async function loadLink(link) {
+    if (!link) return null;
+    const image = link.image ? await loadImage(link.image) : null;
+    return { ...link, image: image && image.naturalWidth ? image : null };
+  }
+
   function loadImage(src) {
     return new Promise((resolve) => {
       const image = new Image();
@@ -339,11 +348,11 @@
       ctx.font = style.title.font;
       const lines = wrapParagraphs(ctx, tweet.title, width);
       blocks.push({ type: "lines", y, lines, font: style.title.font, lineHeight: style.title.lineHeight, color: "name" });
-      y += lines.length * style.title.lineHeight;
+      y += linesHeight(lines, style.title.lineHeight);
       if (parts.some(hasContent)) y += 16;
     }
 
-    const hasContent = (part) => part.text || part.media.length || part.quote;
+    const hasContent = (part) => part.text || part.media.length || part.quote || part.link;
     parts.forEach((part, index) => {
       if (index > 0) {
         y += 22;
@@ -355,7 +364,7 @@
         ctx.font = style.body.font;
         const lines = wrapParagraphs(ctx, part.text, width);
         blocks.push({ type: "lines", y, lines, font: style.body.font, lineHeight: style.body.lineHeight, color: "text" });
-        y += lines.length * style.body.lineHeight;
+        y += linesHeight(lines, style.body.lineHeight);
       }
 
       if (part.media.length) {
@@ -367,8 +376,15 @@
         y -= MEDIA_GAP;
       }
 
-      if (part.quote) {
+      if (part.link) {
         if (part.text || part.media.length) y += 24;
+        const link = measureLink(ctx, part.link, width);
+        blocks.push({ type: "linkCard", y, link });
+        y += link.height;
+      }
+
+      if (part.quote) {
+        if (part.text || part.media.length || part.link) y += 24;
         const quote = measureQuote(ctx, part.quote, width, style);
         blocks.push({ type: "quoteCard", y, quote });
         y += quote.height;
@@ -432,9 +448,11 @@
       } else if (block.type === "lines") {
         ctx.fillStyle = colors[block.color];
         ctx.font = block.font;
-        block.lines.forEach((line, index) => ctx.fillText(line, left, y + index * block.lineHeight));
+        drawLines(ctx, block.lines, left, y, block.lineHeight);
       } else if (block.type === "media") {
         drawRoundedImage(ctx, block.item.image, left, y, block.item.width, block.item.height, 10);
+      } else if (block.type === "linkCard") {
+        drawLinkCard(ctx, block.link, left, y, style);
       } else if (block.type === "quoteCard") {
         drawQuoteCard(ctx, block.quote, left, y, style);
       } else if (block.type === "divider") {
@@ -481,7 +499,7 @@
     if (quote.text) {
       ctx.font = fonts.body;
       lines = wrapParagraphs(ctx, quote.text, inner);
-      y += 12 + lines.length * fonts.lineHeight;
+      y += 12 + linesHeight(lines, fonts.lineHeight);
     }
 
     let mediaHeight = 0;
@@ -546,8 +564,8 @@
       top += 12;
       ctx.fillStyle = colors.text;
       ctx.font = quote.fonts.body;
-      quote.lines.forEach((line, index) => ctx.fillText(line, left, top + index * quote.fonts.lineHeight));
-      top += quote.lines.length * quote.fonts.lineHeight;
+      drawLines(ctx, quote.lines, left, top, quote.fonts.lineHeight);
+      top += linesHeight(quote.lines, quote.fonts.lineHeight);
     }
 
     if (quote.media.length) {
@@ -559,6 +577,74 @@
         drawCoverImage(ctx, item.image, tileX, top, tile, quote.mediaHeight, 10);
         if (item.video) drawPlayBadge(ctx, tileX + tile / 2, top + quote.mediaHeight / 2);
       });
+    }
+  }
+
+  // A link preview, laid out like X's card: the image across the top, then
+  // the domain, a two-line title and a two-line description.
+  function measureLink(ctx, link, width) {
+    const inner = width - QUOTE_PAD * 2;
+    const imageHeight = link.image
+      ? Math.round(width * Math.min(link.image.naturalHeight / link.image.naturalWidth, 0.6))
+      : 0;
+    ctx.font = LINK_TITLE_FONT;
+    const titleLines = clampLines(ctx, wrapParagraphs(ctx, link.title, inner), 2, inner);
+    ctx.font = LINK_TEXT_FONT;
+    const descriptionLines = clampLines(ctx, wrapParagraphs(ctx, link.description, inner), 2, inner);
+
+    let height = imageHeight + QUOTE_PAD;
+    if (link.domain) height += 22;
+    if (titleLines.length) height += 4 + titleLines.length * 26;
+    if (descriptionLines.length) height += 4 + descriptionLines.length * 22;
+    height += QUOTE_PAD - 4;
+    return { ...link, width, inner, imageHeight, titleLines, descriptionLines, height };
+  }
+
+  function clampLines(ctx, lines, max, width) {
+    const kept = lines.filter(Boolean);
+    if (kept.length <= max) return kept;
+    const result = kept.slice(0, max);
+    result[max - 1] = truncateText(ctx, `${result[max - 1]}…`, width);
+    return result;
+  }
+
+  function drawLinkCard(ctx, link, x, y, style) {
+    const { colors } = style;
+    if (link.image) {
+      ctx.save();
+      roundedRectPath(ctx, x, y, link.width, link.height, 16);
+      ctx.clip();
+      drawCoverImage(ctx, link.image, x, y, link.width, link.imageHeight, 0);
+      ctx.restore();
+    }
+    ctx.save();
+    roundedRectPath(ctx, x + 0.5, y + 0.5, link.width - 1, link.height - 1, 16);
+    ctx.strokeStyle = colors.border || colors.line;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    const left = x + QUOTE_PAD;
+    let top = y + link.imageHeight + QUOTE_PAD;
+    ctx.textBaseline = "top";
+    if (link.domain) {
+      ctx.font = `15px ${SANS}`;
+      ctx.fillStyle = colors.handle;
+      ctx.fillText(truncateText(ctx, link.domain, link.inner), left, top);
+      top += 22;
+    }
+    if (link.titleLines.length) {
+      top += 4;
+      ctx.font = LINK_TITLE_FONT;
+      ctx.fillStyle = colors.name;
+      link.titleLines.forEach((line, index) => ctx.fillText(line, left, top + index * 26));
+      top += link.titleLines.length * 26;
+    }
+    if (link.descriptionLines.length) {
+      top += 4;
+      ctx.font = LINK_TEXT_FONT;
+      ctx.fillStyle = colors.handle;
+      link.descriptionLines.forEach((line, index) => ctx.fillText(line, left, top + index * 22));
     }
   }
 
@@ -666,10 +752,31 @@
     }
   }
 
+  // An empty paragraph (the blank line between two paragraphs) stays in the
+  // list as "" and takes half a line, like the gap X leaves between paragraphs.
   function wrapParagraphs(ctx, text, maxWidth) {
     const lines = [];
-    for (const paragraph of String(text).split("\n")) lines.push(...wrapText(ctx, paragraph, maxWidth));
+    for (const paragraph of String(text).split("\n")) {
+      if (paragraph) lines.push(...wrapText(ctx, paragraph, maxWidth));
+      else if (lines.length) lines.push("");
+    }
     return lines;
+  }
+
+  function lineAdvance(line, lineHeight) {
+    return line ? lineHeight : Math.round(lineHeight / 2);
+  }
+
+  function linesHeight(lines, lineHeight) {
+    return lines.reduce((sum, line) => sum + lineAdvance(line, lineHeight), 0);
+  }
+
+  function drawLines(ctx, lines, x, y, lineHeight) {
+    let offset = 0;
+    for (const line of lines) {
+      if (line) ctx.fillText(line, x, y + offset);
+      offset += lineAdvance(line, lineHeight);
+    }
   }
 
   function wrapText(ctx, text, maxWidth) {

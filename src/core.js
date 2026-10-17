@@ -42,6 +42,17 @@
       .join("\n");
   }
 
+  // Post bodies keep their paragraph breaks: runs of blank lines collapse to
+  // one, so the card can leave a gap between paragraphs like the post does.
+  function normalizeBody(value) {
+    return String(value || "")
+      .replace(/\r\n/g, "\n")
+      .split(/\n[ \t]*\n/)
+      .map(normalizeWhitespace)
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
   function normalizeHandle(value) {
     const handle = String(value || "").trim();
     if (!handle) return "";
@@ -186,11 +197,23 @@
   function normalizeParts(parts) {
     return (Array.isArray(parts) ? parts : [])
       .map((part) => ({
-        text: clampText(normalizeWhitespace(part && part.text)),
+        text: clampText(normalizeBody(part && part.text)),
         media: normalizeMedia(part && part.media),
-        quote: normalizeQuote(part && part.quote)
+        quote: normalizeQuote(part && part.quote),
+        link: normalizeLink(part && part.link)
       }))
-      .filter((part) => part.text || part.media.length || part.quote);
+      .filter((part) => part.text || part.media.length || part.quote || part.link);
+  }
+
+  function normalizeLink(link) {
+    if (!link) return null;
+    const data = {
+      domain: normalizeWhitespace(link.domain),
+      title: clampText(normalizeWhitespace(link.title).replace(/\n/g, " "), 200),
+      description: clampText(normalizeWhitespace(link.description).replace(/\n/g, " "), 300),
+      image: String(link.image || "").trim()
+    };
+    return data.title || data.image ? data : null;
   }
 
   // A quoted post renders as a nested card, so it keeps its own author and
@@ -201,7 +224,7 @@
       authorName: normalizeWhitespace(quote.authorName),
       authorHandle: normalizeHandle(quote.authorHandle),
       avatarUrl: String(quote.avatarUrl || "").trim(),
-      text: clampText(normalizeWhitespace(quote.text), MAX_QUOTE_CHARS),
+      text: clampText(normalizeBody(quote.text), MAX_QUOTE_CHARS),
       media: normalizeMedia(quote.media).slice(0, 4),
       createdAtLabel: normalizeWhitespace(quote.createdAtLabel)
     };
@@ -215,9 +238,10 @@
       authorHandle: normalizeHandle(data.authorHandle),
       avatarUrl: String(data.avatarUrl || "").trim(),
       title: normalizeWhitespace(data.title),
-      text: clampText(normalizeWhitespace(data.text)),
+      text: clampText(normalizeBody(data.text)),
       media: normalizeMedia(data.media),
       quote: normalizeQuote(data.quote),
+      link: normalizeLink(data.link),
       parts: normalizeParts(data.parts),
       stats: normalizeStats(data.stats),
       createdAtLabel: normalizeWhitespace(data.createdAtLabel),
@@ -277,7 +301,9 @@
 
     for (const char of text) {
       const nextMode = tokenMode(char);
-      if (buffer && nextMode !== mode) {
+      // Latin words and spaces stay whole; CJK may break after any character,
+      // otherwise a long CJK run after a Latin word jumps to the next line.
+      if (buffer && (nextMode !== mode || mode === "cjk")) {
         tokens.push(buffer);
         buffer = "";
       }
@@ -407,10 +433,12 @@
     normalizeHandle,
     normalizeShareSettings,
     normalizeMedia,
+    normalizeLink,
     normalizeQuote,
     normalizeStats,
     normalizeTweetData,
     normalizeWhitespace,
+    normalizeBody,
     wrapCardText
   };
 });

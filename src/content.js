@@ -24,6 +24,7 @@
   const MENU_SELECTOR = '[role="menu"]';
   const SHARE_BUTTON_SELECTOR =
     '[data-testid="share"], [aria-label*="Share"], [aria-label*="分享"], [aria-label*="共享"]';
+  const LINK_DOMAIN_PATTERN = /^(?:From\s+|来自\s*|來自\s*)?((?:[\w-]+\.)+[a-z]{2,})$/i;
   const SHOW_MORE_LABELS = ["Show more", "展开", "显示更多"];
   const DEFAULT_SETTINGS = core.DEFAULT_SHARE_SETTINGS || {
     theme: "light",
@@ -242,7 +243,7 @@
 
       showGeneratingToast();
       const tweet = await extractPost(post);
-      if (!tweet.text && !tweet.title && !tweet.media.length && !tweet.quote) {
+      if (!tweet.text && !tweet.title && !tweet.media.length && !tweet.quote && !tweet.link) {
         safeShowToast(t("toastNoPost", "Couldn't find this post. Right-click directly on the post and retry."));
         return;
       }
@@ -313,11 +314,11 @@
       for (const article of articles) {
         await expandTweetIfNeeded(article);
         const tweet = extractTweetData(article);
-        parts.push({ text: tweet.text, media: tweet.media, quote: tweet.quote });
+        parts.push({ text: tweet.text, media: tweet.media, quote: tweet.quote, link: tweet.link });
       }
       const first = extractTweetData(articles[0]);
       state.lastThread = null;
-      await produceCard(normalizeTweetData({ ...first, text: "", media: [], quote: null, parts }));
+      await produceCard(normalizeTweetData({ ...first, text: "", media: [], quote: null, link: null, parts }));
     } catch (error) {
       console.error("[PaperCard] Failed to create thread image", error);
       safeShowToast(t("toastFailed", "Couldn't create the image. Please try again."), state.lastPngBlob);
@@ -466,11 +467,13 @@
       readText(userName && userName.querySelector("span"));
     const authorHandle = extractHandle(userName);
     const textNodes = [...article.querySelectorAll('[data-testid="tweetText"]')].filter(own);
-    const text = textNodes.map((node) => node.innerText || node.textContent || "").join("\n");
+    const text = textNodes.map(readPostText).join("\n");
     const time = [...article.querySelectorAll("time")].find(own) || null;
     const sourceUrl = resolveTweetUrl(article, time);
     const avatarUrl = resolveImageSrc(article.querySelector('img[src*="profile_images"]'));
-    const media = extractMedia(article).filter((item) => own(item.node)).map(({ node, ...item }) => item);
+    const media = extractMedia(article)
+      .filter((item) => own(item.node) && !item.node.closest('[data-testid="card.wrapper"]') && !/\/card_img\//.test(item.src))
+      .map(({ node, ...item }) => item);
     const stats = extractStats(article);
 
     return normalizeTweetData({
@@ -481,11 +484,43 @@
       media,
       stats,
       quote: quoteBox ? extractQuoteData(quoteBox) : null,
+      link: extractLinkCard(article, own),
       createdAtLabel: resolveCreatedAtLabel(time),
       sourceUrl,
       sourceLabel: "x.com",
       platform: "x"
     });
+  }
+
+  // Link previews live in card.wrapper (or, without test ids, the link that
+  // wraps a card_img): an image plus domain / title / description lines.
+  // Large cards print "From example.com" in a separate link below the card.
+  // Polls and app cards carry neither an image nor a domain and are skipped.
+  function extractLinkCard(root, own = () => true) {
+    const cardImage = [...root.querySelectorAll('img[src*="/card_img/"]')].find(own);
+    const card =
+      [...root.querySelectorAll('[data-testid="card.wrapper"]')].find(own) ||
+      (cardImage && cardImage.closest("a")) ||
+      null;
+    if (!card) return null;
+
+    const lines = String(card.innerText || "").split("\n").map((line) => line.trim()).filter(Boolean);
+    const domainOf = (line) => (LINK_DOMAIN_PATTERN.exec(line) || [])[1] || "";
+    const fromLine = [...root.querySelectorAll("a, div, span")]
+      .filter((node) => own(node) && !card.contains(node) && !node.children.length)
+      .map(readText)
+      .find((text) => /^(?:From|来自|來自)\s*\S+$/.test(text));
+    const domain = lines.map(domainOf).find(Boolean) || domainOf(fromLine || "");
+    const textLines = lines.filter((line) => !domainOf(line));
+    const image = resolveImageSrc(card.querySelector('img[src*="/card_img/"]') || card.querySelector("img"));
+    if (!image && !domain) return null;
+
+    return {
+      domain: domain.replace(/^www\./i, ""),
+      title: textLines[0] || "",
+      description: textLines.slice(1).join(" "),
+      image
+    };
   }
 
   // A quoted post is not its own <article>: X nests it as a clickable
@@ -515,7 +550,7 @@
     const time = box.querySelector("time");
     const textNodes = [...box.querySelectorAll('[data-testid="tweetText"]')];
     const text = textNodes.length
-      ? textNodes.map((node) => node.innerText || node.textContent || "").join("\n")
+      ? textNodes.map(readPostText).join("\n")
       : quoteTextFromLines(box, authorHandle, readText(time));
 
     return {
@@ -555,7 +590,7 @@
 
   function readTweetText(article) {
     return [...article.querySelectorAll('[data-testid="tweetText"]')]
-      .map((node) => node.innerText || node.textContent || "")
+      .map(readPostText)
       .join("\n");
   }
 
@@ -616,6 +651,40 @@
   function resolveImageSrc(img) {
     if (!img) return "";
     return img.currentSrc || img.src || img.getAttribute("src") || "";
+  }
+
+  // innerText would keep the parts of a link X hides visually (the "https://"
+  // prefix and the cut-off tail, which then land on lines of their own) and
+  // drop emoji, which X draws as <img alt="😂">. Walk the nodes instead.
+  function readPostText(root) {
+    let text = "";
+    const walk = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.nodeValue;
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      if (node.tagName === "BR") {
+        text += "\n";
+        return;
+      }
+      if (node.tagName === "IMG") {
+        text += node.getAttribute("alt") || "";
+        return;
+      }
+      if (node !== root && isVisuallyHidden(node)) return;
+      node.childNodes.forEach(walk);
+    };
+    walk(root);
+    return text;
+  }
+
+  function isVisuallyHidden(element) {
+    const style = window.getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden") return true;
+    // X hides a link's "https://" prefix and tail with a ~0.001px font.
+    if (parseFloat(style.fontSize) < 1 || style.opacity === "0") return true;
+    return style.position === "absolute" && element.getClientRects().length > 0 && element.getBoundingClientRect().width <= 1;
   }
 
   function readText(node) {
@@ -1038,19 +1107,26 @@
   }
 
   async function hydrateMedia(tweet) {
-    const [avatarUrl, media, quote, parts] = await Promise.all([
+    const [avatarUrl, media, quote, link, parts] = await Promise.all([
       tweet.avatarUrl ? imageUrlToDataUrl(tweet.avatarUrl) : "",
       hydrateMediaList(tweet.media || []),
       hydrateQuote(tweet.quote),
+      hydrateLink(tweet.link),
       Promise.all(
         (tweet.parts || []).map(async (part) => ({
           ...part,
           media: await hydrateMediaList(part.media),
-          quote: await hydrateQuote(part.quote)
+          quote: await hydrateQuote(part.quote),
+          link: await hydrateLink(part.link)
         }))
       )
     ]);
-    return { ...tweet, avatarUrl, media, quote, parts };
+    return { ...tweet, avatarUrl, media, quote, link, parts };
+  }
+
+  async function hydrateLink(link) {
+    if (!link) return null;
+    return { ...link, image: link.image ? await imageUrlToDataUrl(link.image) : "" };
   }
 
   async function hydrateQuote(quote) {

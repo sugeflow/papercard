@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Quoted posts on X now render as a nested card (author, date, text and media, with a play badge on videos) instead of being merged into the main post's text and images.
+- Link previews on X render as a card (image, domain, title) instead of being dropped.
+- Chinese and Japanese text wraps at any character, so a line no longer ends early after a Latin word; paragraph breaks are kept as a gap.
+- Links in a post no longer leave X's hidden "https://" prefix on a line of its own; emoji drawn as images are kept.
 
 ## 1.3.0 — 2026-10-02
 

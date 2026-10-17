@@ -157,3 +157,20 @@ test("normalizeTweetData keeps a quoted post separate from the outer text", () =
   assert.equal(data.quote.media[0].video, true);
   assert.equal(core.normalizeTweetData({ quote: { text: "  " } }).quote, null);
 });
+
+test("normalizeTweetData keeps one blank line between paragraphs", () => {
+  const data = core.normalizeTweetData({ text: "one\n\n\n two \n\nthree\nfour" });
+  assert.equal(data.text, "one\n\ntwo\n\nthree\nfour");
+});
+
+test("normalizeTweetData keeps a link preview with a title or image", () => {
+  const data = core.normalizeTweetData({ text: "x", link: { domain: "apate.ai", title: "Apate\n| AI", image: "https://pbs.twimg.com/card_img/1/a" } });
+  assert.deepEqual(data.link, { domain: "apate.ai", title: "Apate | AI", description: "", image: "https://pbs.twimg.com/card_img/1/a" });
+  assert.equal(core.normalizeTweetData({ link: { domain: "a.com" } }).link, null);
+});
+
+test("wrapCardText breaks CJK after any character, even right after a Latin word", () => {
+  const ctx = { measureText: (text) => ({ width: [...text].length * 10 }) };
+  const lines = core.wrapCardText(ctx, "这些AI会假装成各种人", 60);
+  assert.equal(lines[0], "这些AI会假");
+});
